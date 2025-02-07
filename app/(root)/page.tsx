@@ -1,5 +1,14 @@
-import { Button } from '@/components/ui/button';
+import Hero from '@/components/hero';
+import BooksList from '@/components/shared/books/BooksList';
+import { getLatestBooks } from '@/lib/actions/book.actions';
 
-export default function Home() {
-  return <h1>Bookstore</h1>;
+export default async function HomePage() {
+  const books = await getLatestBooks();
+  console.log(books);
+  return (
+    <>
+      <Hero></Hero>
+      <BooksList books={books}></BooksList>
+    </>
+  );
 }

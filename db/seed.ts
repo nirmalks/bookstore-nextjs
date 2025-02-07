@@ -1,0 +1,110 @@
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
+
+async function main() {
+  // Insert Authors
+  const authors = await prisma.$transaction([
+    prisma.author.create({
+      data: { name: 'Paulo Coelho', bio: 'Brazilian author known for The Alchemist.' },
+    }),
+    prisma.author.create({
+      data: { name: 'J.K. Rowling', bio: 'British author known for Harry Potter series.' },
+    }),
+    prisma.author.create({
+      data: { name: 'George Orwell', bio: 'English novelist known for 1984 and Animal Farm.' },
+    }),
+    prisma.author.create({
+      data: { name: 'Jane Austen', bio: 'English novelist known for Pride and Prejudice.' },
+    }),
+    prisma.author.create({
+      data: { name: 'F. Scott Fitzgerald', bio: 'American novelist known for The Great Gatsby.' },
+    }),
+  ]);
+
+  // Insert Genres
+  const genres = await prisma.$transaction([
+    prisma.genre.create({ data: { name: 'Fiction' } }),
+    prisma.genre.create({ data: { name: 'Drama' } }),
+    prisma.genre.create({ data: { name: 'Fantasy' } }),
+  ]);
+
+  // Insert Books
+  const books = await prisma.$transaction([
+    prisma.book.create({
+      data: {
+        title: 'The Alchemist',
+        price: 499.99,
+        stock: 10,
+        isbn: '978-3-16-148410-0',
+        publishedDate: new Date('2024-01-01'),
+        imagePath: 'the_alchemist.jpg',
+        description: 'A philosophical novel inspiring readers to follow their dreams.',
+      },
+    }),
+    prisma.book.create({
+      data: {
+        title: 'Harry Potter and the Sorcerer’s Stone',
+        price: 899.99,
+        stock: 15,
+        isbn: '978-0-7475-3269-9',
+        publishedDate: new Date('1997-06-26'),
+        imagePath: 'harry_potter.jpg',
+        description: 'The first book in J.K. Rowling’s Harry Potter series.',
+      },
+    }),
+    prisma.book.create({
+      data: {
+        title: '1984',
+        price: 399.99,
+        stock: 20,
+        isbn: '978-0-452-28423-4',
+        publishedDate: new Date('1949-06-08'),
+        imagePath: '1984.jpg',
+        description: 'A dystopian novel by George Orwell.',
+      },
+    }),
+    prisma.book.create({
+      data: {
+        title: 'Pride and Prejudice',
+        price: 299.99,
+        stock: 25,
+        isbn: '978-0-19-280238-5',
+        publishedDate: new Date('1813-01-28'),
+        imagePath: 'pride_prejudice.jpg',
+        description: 'A classic novel by Jane Austen.',
+      },
+    }),
+    prisma.book.create({
+      data: {
+        title: 'The Great Gatsby',
+        price: 349.99,
+        stock: 30,
+        isbn: '978-0-7432-7356-5',
+        publishedDate: new Date('1925-04-10'),
+        imagePath: 'great_gatsby.jpg',
+        description: 'A novel by F. Scott Fitzgerald set in the Jazz Age.',
+      },
+    }),
+  ]);
+
+  // Insert BookAuthor relations
+  await prisma.$transaction([
+    prisma.bookAuthor.create({ data: { bookId: books[0].id, authorId: authors[0].id } }),
+    prisma.bookAuthor.create({ data: { bookId: books[1].id, authorId: authors[1].id } }),
+    prisma.bookAuthor.create({ data: { bookId: books[2].id, authorId: authors[2].id } }),
+    prisma.bookAuthor.create({ data: { bookId: books[3].id, authorId: authors[3].id } }),
+    prisma.bookAuthor.create({ data: { bookId: books[4].id, authorId: authors[4].id } }),
+  ]);
+
+  console.log('Seeding completed!');
+}
+
+main()
+  .catch((e) => {
+    console.error(e);
+    process.exit(1);
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
+  });

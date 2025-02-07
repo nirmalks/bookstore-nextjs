@@ -1,0 +1,135 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN
+  CUSTOMER
+}
+
+enum OrderStatus {
+  PENDING
+  SHIPPED
+  CANCELLED
+}
+
+model Author {
+  id    BigInt       @id @default(autoincrement())
+  name  String       @db.VarChar(255)
+  bio   String?
+  books BookAuthor[]
+}
+
+model Genre {
+  id    BigInt      @id @default(autoincrement())
+  name  String      @unique @db.VarChar(100)
+  books BookGenre[]
+}
+
+model Book {
+  id            BigInt       @id @default(autoincrement())
+  title         String       @db.VarChar(255)
+  price         Decimal      @db.Decimal(10, 2)
+  stock         Int
+  isbn          String       @unique @db.VarChar(20)
+  publishedDate DateTime     @db.Date
+  imagePath     String?      @db.VarChar(255)
+  description   String?
+  authors       BookAuthor[]
+  genres        BookGenre[]
+  cartItems     CartItem[]
+  orderItems    OrderItem[]
+}
+
+model BookAuthor {
+  book     Book   @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  author   Author @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  bookId   BigInt
+  authorId BigInt
+
+  @@id([bookId, authorId])
+}
+
+model BookGenre {
+  book    Book   @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  genre   Genre  @relation(fields: [genreId], references: [id], onDelete: Cascade)
+  bookId  BigInt
+  genreId BigInt
+
+  @@id([bookId, genreId])
+}
+
+model User {
+  id        BigInt          @id @default(autoincrement())
+  username  String          @unique @db.VarChar(100)
+  password  String          @db.VarChar(255)
+  role      UserRole
+  email     String          @unique @db.VarChar(255)
+  cart      Cart?
+  orders    PurchaseOrder[]
+  addresses Address[]
+}
+
+model Cart {
+  id         BigInt     @id @default(autoincrement())
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId     BigInt     @unique
+  totalPrice Decimal    @default(0.0) @db.Decimal(10, 2)
+  items      CartItem[]
+}
+
+model CartItem {
+  id       BigInt  @id @default(autoincrement())
+  cart     Cart    @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  cartId   BigInt
+  book     Book    @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  bookId   BigInt
+  quantity Int
+  price    Decimal @db.Decimal(10, 2)
+}
+
+model PurchaseOrder {
+  id         BigInt      @id @default(autoincrement())
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId     BigInt
+  totalCost  Decimal     @db.Decimal(10, 2)
+  status     OrderStatus @default(PENDING)
+  placedDate DateTime    @default(now())
+  items      OrderItem[]
+  address    Address?    @relation(fields: [addressId], references: [id], onDelete: SetNull)
+  addressId  BigInt?
+}
+
+model OrderItem {
+  id       BigInt        @id @default(autoincrement())
+  order    PurchaseOrder @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  orderId  BigInt
+  book     Book          @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  bookId   BigInt
+  quantity Int
+  price    Decimal       @db.Decimal(10, 2)
+}
+
+model Address {
+  id        BigInt          @id @default(autoincrement())
+  user      User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    BigInt
+  address   String          @db.VarChar(500)
+  city      String          @db.VarChar(100)
+  state     String          @db.VarChar(100)
+  country   String          @db.VarChar(100)
+  pinCode   String          @db.VarChar(20)
+  isDefault Boolean         @default(false)
+  orders    PurchaseOrder[]
+}
