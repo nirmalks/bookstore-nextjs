@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
+import { Book } from '@/types';
 export const formatPrice = (price: number) => {
   const dollarsAmount = new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -7,28 +8,12 @@ export const formatPrice = (price: number) => {
   }).format(price);
   return dollarsAmount;
 };
-export interface Book {
-  id: bigint;
-  title: string;
-  authorIds?: number[];
-  price: number;
-  stock: number;
-  isbn: string;
-  publishedDate: string;
-  genreIds?: number[];
-  imagePath?: string;
-  quantity?: number;
-}
 
-type BookListProps = {
-  books: Book[];
-};
 const BooksList = ({ books }: any) => {
   return (
     <div className="mt-12 grid gap-y-8">
       {books.map((book: Book) => {
         const { title, price, imagePath } = book;
-        const formattedPrice = formatPrice(price);
         const image = `/images/${imagePath}`;
         return (
           <Link
@@ -48,9 +33,7 @@ const BooksList = ({ books }: any) => {
             <div className="ml-0 sm:ml-16">
               <h2 className="capitalize font-medium text-lg">{title}</h2>
             </div>
-            <p className="font-medium ml-0 sm:ml-auto text-lg">
-              {formattedPrice}
-            </p>
+            <p className="font-medium ml-0 sm:ml-auto text-lg">{price}</p>
           </Link>
         );
       })}

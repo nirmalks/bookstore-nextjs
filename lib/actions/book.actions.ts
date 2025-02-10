@@ -6,5 +6,9 @@ export async function getLatestBooks() {
     take: 5,
     orderBy: { publishedDate: 'desc' }
   });
-  return data;
+  return data.map(book => ({
+    ...book,
+    price: Number(book.price),
+    id: Number(book.id),
+  }));
 }
