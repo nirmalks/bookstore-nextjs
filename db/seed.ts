@@ -27,13 +27,17 @@ async function main() {
     prisma.genre.create({ data: { name: 'Fiction' } }),
     prisma.genre.create({ data: { name: 'Drama' } }),
     prisma.genre.create({ data: { name: 'Fantasy' } }),
+    prisma.genre.create({ data: { name: 'Dystopian' } }),
+    prisma.genre.create({ data: { name: 'Classic' } }),
   ]);
+
 
   // Insert Books
   const books = await prisma.$transaction([
     prisma.book.create({
       data: {
         title: 'The Alchemist',
+        slug: 'the-alchemist',
         price: 499.99,
         stock: 10,
         isbn: '978-3-16-148410-0',
@@ -45,6 +49,7 @@ async function main() {
     prisma.book.create({
       data: {
         title: 'Harry Potter and the Sorcerer’s Stone',
+        slug: 'harry-potter-sorcerer-stone',
         price: 899.99,
         stock: 15,
         isbn: '978-0-7475-3269-9',
@@ -56,6 +61,7 @@ async function main() {
     prisma.book.create({
       data: {
         title: '1984',
+        slug: '1984',
         price: 399.99,
         stock: 20,
         isbn: '978-0-452-28423-4',
@@ -67,6 +73,7 @@ async function main() {
     prisma.book.create({
       data: {
         title: 'Pride and Prejudice',
+        slug: 'pride-and-prejudice',
         price: 299.99,
         stock: 25,
         isbn: '978-0-19-280238-5',
@@ -78,6 +85,7 @@ async function main() {
     prisma.book.create({
       data: {
         title: 'The Great Gatsby',
+        slug: 'the-great-gatsby',
         price: 349.99,
         stock: 30,
         isbn: '978-0-7432-7356-5',
@@ -97,6 +105,21 @@ async function main() {
     prisma.bookAuthor.create({ data: { bookId: books[4].id, authorId: authors[4].id } }),
   ]);
 
+  const bookGenres = [
+    { bookId: books[0].id, genreId: genres[0].id },
+    { bookId: books[1].id, genreId: genres[1].id },
+    { bookId: books[2].id, genreId: genres[2].id },
+    { bookId: books[3].id, genreId: genres[3].id },
+    { bookId: books[4].id, genreId: genres[4].id },
+  ];
+
+  await prisma.$transaction(
+    bookGenres.map((bg) =>
+      prisma.bookGenre.create({
+        data: bg,
+      })
+    )
+  );
   console.log('Seeding completed!');
 }
 

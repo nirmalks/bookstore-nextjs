@@ -12,7 +12,7 @@ const BooksGrid = ({ books }: { books: Book[] }): JSX.Element => {
         return (
           <Link
             key={book.id}
-            href={`/books/${book.id}`}
+            href={`/books/${book.slug}`}
             className="card w-full shadow-xl hover:shadow-2xl transition duration-300"
           >
             <figure className="px-4 pt-4">

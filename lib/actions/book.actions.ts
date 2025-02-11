@@ -1,9 +1,9 @@
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@/db/prisma";
+import { NUM_OF_FEATURED_BOOKS } from "../constants";
 
 export async function getLatestBooks() {
-  const prisma = new PrismaClient();
   const data = await prisma.book.findMany({
-    take: 5,
+    take: NUM_OF_FEATURED_BOOKS,
     orderBy: { publishedDate: 'desc' }
   });
   return data.map(book => ({
@@ -11,4 +11,39 @@ export async function getLatestBooks() {
     price: Number(book.price),
     id: Number(book.id),
   }));
+}
+
+export async function getBookBySlug(slug: string) {
+  const book = await prisma.book.findFirst({
+    where: { slug },
+    include: {
+      authors: {
+        select: {
+          author: {
+            select: {
+              id: true,
+              name: true,
+              bio: true
+            }
+          }
+        }
+      },
+      genres: {
+        select: {
+          genre: {
+            select: {
+              id: true,
+              name: true
+            }
+          }
+        }
+      }
+    }
+  });
+  if (!book) return null;
+  return {
+    ...book,
+    authors: book.authors.map(a => a.author),
+    genres: book.genres.map(g => g.genre)
+  };
 }
