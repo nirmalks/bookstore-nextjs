@@ -3,14 +3,14 @@ import { formatNumberWithDecimal } from './utils';
 
 const genreSchema = z.object({
   genre: z.object({
-    id: z.bigint(),
+    id: z.string(),
     name: z.string(),
   }),
 });
 
 const authorSchema = z.object({
   author: z.object({
-    id: z.bigint(),
+    id: z.string(),
     name: z.string(),
   }),
 });
@@ -30,5 +30,7 @@ export const insertBookSchema = z.object({
   price: currencyFormat,
   authors: z.array(authorSchema),
   genres: z.array(genreSchema),
+  rating: z.coerce.number(),
+  numReviews: z.number()
 })
 

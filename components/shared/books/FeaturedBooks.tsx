@@ -1,4 +1,4 @@
-import SectionTitle from '@/components/sectiontitle';
+import SectionTitle from '../SectionTitle';
 import BooksGrid from './BooksGrid';
 import { Book } from '@/types';
 

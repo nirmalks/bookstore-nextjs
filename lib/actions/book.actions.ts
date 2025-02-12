@@ -9,7 +9,10 @@ export async function getLatestBooks() {
   return data.map(book => ({
     ...book,
     price: Number(book.price),
-    id: Number(book.id),
+    rating: Number(book.rating),
+    id: book.id,
+    authors: [],
+    genres: []
   }));
 }
 

@@ -11,9 +11,9 @@ const Header = () => {
           <Link href="/" className="flex-start">
             <Image
               priority={true}
-              src="/images/logo.svg"
-              width={48}
-              height={48}
+              src="/images/logo.png"
+              width={90}
+              height={90}
               alt={`${APP_NAME} logo`}
             />
             <span className="hidden lg:block font-bold text-2xl ml-3">

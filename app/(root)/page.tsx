@@ -1,5 +1,5 @@
 import Hero from '@/components/hero';
-import BooksGrid from '@/components/shared/books/BooksGrid';
+import FeaturedBooks from '@/components/shared/books/FeaturedBooks';
 import { getLatestBooks } from '@/lib/actions/book.actions';
 
 export default async function HomePage() {
@@ -7,7 +7,7 @@ export default async function HomePage() {
   return (
     <>
       <Hero></Hero>
-      <BooksGrid books={books}></BooksGrid>
+      <FeaturedBooks books={books}></FeaturedBooks>
     </>
   );
 }

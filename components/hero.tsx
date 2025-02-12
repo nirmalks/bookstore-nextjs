@@ -16,8 +16,8 @@ import {
 export const Hero = () => {
   const data = [
     { image: prob, alt: 'probablility' },
-    { image: harry, alt: 'harry potters' },
-    { image: alchemist, alt: 'al chemist' },
+    { image: harry, alt: 'harry potter' },
+    { image: alchemist, alt: 'alchemist' },
   ];
   return (
     <section className="grid grid-cols-1 md:grid-cols-2 mx-4 gap-4">

@@ -44,6 +44,8 @@ async function main() {
         publishedDate: new Date('2024-01-01'),
         imagePath: 'the_alchemist.jpg',
         description: 'A philosophical novel inspiring readers to follow their dreams.',
+        rating: 4.6,
+        numReviews: 12,
       },
     }),
     prisma.book.create({
@@ -56,6 +58,8 @@ async function main() {
         publishedDate: new Date('1997-06-26'),
         imagePath: 'harry_potter.jpg',
         description: 'The first book in J.K. Rowling’s Harry Potter series.',
+        rating: 4.6,
+        numReviews: 12,
       },
     }),
     prisma.book.create({
@@ -68,6 +72,8 @@ async function main() {
         publishedDate: new Date('1949-06-08'),
         imagePath: '1984.jpg',
         description: 'A dystopian novel by George Orwell.',
+        rating: 4.6,
+        numReviews: 12,
       },
     }),
     prisma.book.create({
@@ -80,6 +86,8 @@ async function main() {
         publishedDate: new Date('1813-01-28'),
         imagePath: 'pride_prejudice.jpg',
         description: 'A classic novel by Jane Austen.',
+        rating: 4.6,
+        numReviews: 12,
       },
     }),
     prisma.book.create({
@@ -92,6 +100,8 @@ async function main() {
         publishedDate: new Date('1925-04-10'),
         imagePath: 'great_gatsby.jpg',
         description: 'A novel by F. Scott Fitzgerald set in the Jazz Age.',
+        rating: 4.6,
+        numReviews: 12,
       },
     }),
   ]);
@@ -105,18 +115,15 @@ async function main() {
     prisma.bookAuthor.create({ data: { bookId: books[4].id, authorId: authors[4].id } }),
   ]);
 
-  const bookGenres = [
-    { bookId: books[0].id, genreId: genres[0].id },
-    { bookId: books[1].id, genreId: genres[1].id },
-    { bookId: books[2].id, genreId: genres[2].id },
-    { bookId: books[3].id, genreId: genres[3].id },
-    { bookId: books[4].id, genreId: genres[4].id },
-  ];
 
+  // Insert BookGenre relations
   await prisma.$transaction(
-    bookGenres.map((bg) =>
+    books.map((book, index) =>
       prisma.bookGenre.create({
-        data: bg,
+        data: {
+          bookId: book.id,
+          genreId: genres[index].id,
+        },
       })
     )
   );

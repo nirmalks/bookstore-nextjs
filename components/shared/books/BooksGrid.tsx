@@ -3,6 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { JSX } from 'react';
 const BooksGrid = ({ books }: { books: Book[] }): JSX.Element => {
+  console.log(books);
   return (
     <div className="pt-24 p-8 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
       {books.map((book: Book) => {

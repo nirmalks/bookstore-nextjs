@@ -25,20 +25,20 @@ enum OrderStatus {
 }
 
 model Author {
-  id    BigInt       @id @default(autoincrement())
+  id    String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name  String       @db.VarChar(255)
   bio   String?
   books BookAuthor[]
 }
 
 model Genre {
-  id    BigInt      @id @default(autoincrement())
+  id    String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name  String      @unique @db.VarChar(100)
   books BookGenre[]
 }
 
 model Book {
-  id            BigInt       @id @default(autoincrement())
+  id            String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   slug          String
   title         String       @db.VarChar(255)
   price         Decimal      @db.Decimal(10, 2)
@@ -51,13 +51,16 @@ model Book {
   genres        BookGenre[]
   cartItems     CartItem[]
   orderItems    OrderItem[]
+  rating        Decimal      @default(0) @db.Decimal(3, 2)
+  numReviews    Int          @default(0)
+  Review        Review[]
 }
 
 model BookAuthor {
   book     Book   @relation(fields: [bookId], references: [id], onDelete: Cascade)
   author   Author @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  bookId   BigInt
-  authorId BigInt
+  bookId   String @db.Uuid
+  authorId String @db.Uuid
 
   @@id([bookId, authorId])
 }
@@ -65,14 +68,14 @@ model BookAuthor {
 model BookGenre {
   book    Book   @relation(fields: [bookId], references: [id], onDelete: Cascade)
   genre   Genre  @relation(fields: [genreId], references: [id], onDelete: Cascade)
-  bookId  BigInt
-  genreId BigInt
+  bookId  String @db.Uuid
+  genreId String @db.Uuid
 
   @@id([bookId, genreId])
 }
 
 model User {
-  id        BigInt          @id @default(autoincrement())
+  id        String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   username  String          @unique @db.VarChar(100)
   password  String          @db.VarChar(255)
   role      UserRole
@@ -80,52 +83,53 @@ model User {
   cart      Cart?
   orders    PurchaseOrder[]
   addresses Address[]
+  Review    Review[]
 }
 
 model Cart {
-  id         BigInt     @id @default(autoincrement())
+  id         String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId     BigInt     @unique
+  userId     String     @unique @db.Uuid
   totalPrice Decimal    @default(0.0) @db.Decimal(10, 2)
   items      CartItem[]
 }
 
 model CartItem {
-  id       BigInt  @id @default(autoincrement())
+  id       String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   cart     Cart    @relation(fields: [cartId], references: [id], onDelete: Cascade)
-  cartId   BigInt
+  cartId   String  @db.Uuid
   book     Book    @relation(fields: [bookId], references: [id], onDelete: Cascade)
-  bookId   BigInt
+  bookId   String  @db.Uuid
   quantity Int
   price    Decimal @db.Decimal(10, 2)
 }
 
 model PurchaseOrder {
-  id         BigInt      @id @default(autoincrement())
+  id         String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId     BigInt
+  userId     String      @db.Uuid
   totalCost  Decimal     @db.Decimal(10, 2)
   status     OrderStatus @default(PENDING)
   placedDate DateTime    @default(now())
   items      OrderItem[]
   address    Address?    @relation(fields: [addressId], references: [id], onDelete: SetNull)
-  addressId  BigInt?
+  addressId  String?     @db.Uuid
 }
 
 model OrderItem {
-  id       BigInt        @id @default(autoincrement())
+  id       String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   order    PurchaseOrder @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  orderId  BigInt
+  orderId  String        @db.Uuid
   book     Book          @relation(fields: [bookId], references: [id], onDelete: Cascade)
-  bookId   BigInt
+  bookId   String        @db.Uuid
   quantity Int
   price    Decimal       @db.Decimal(10, 2)
 }
 
 model Address {
-  id        BigInt          @id @default(autoincrement())
+  id        String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   user      User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId    BigInt
+  userId    String          @db.Uuid
   address   String          @db.VarChar(500)
   city      String          @db.VarChar(100)
   state     String          @db.VarChar(100)
@@ -133,4 +137,17 @@ model Address {
   pinCode   String          @db.VarChar(20)
   isDefault Boolean         @default(false)
   orders    PurchaseOrder[]
+}
+
+model Review {
+  id                 String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId             String   @db.Uuid
+  bookId             String   @db.Uuid
+  rating             Int
+  title              String
+  description        String
+  isVerifiedPurchase Boolean  @default(true)
+  createdAt          DateTime @default(now()) @db.Timestamp(6)
+  book               Book     @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
