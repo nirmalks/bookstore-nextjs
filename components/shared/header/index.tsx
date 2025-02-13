@@ -13,7 +13,7 @@ const Header = () => {
               priority={true}
               src="/images/logo.png"
               width={90}
-              height={90}
+              height={45}
               alt={`${APP_NAME} logo`}
             />
             <span className="hidden lg:block font-bold text-2xl ml-3">

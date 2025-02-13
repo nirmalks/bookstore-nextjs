@@ -1,4 +1,5 @@
-import { PrismaClient } from '@prisma/client';
+import { hash } from '@/lib/encrypt';
+import { PrismaClient, UserRole } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
@@ -127,6 +128,30 @@ async function main() {
       })
     )
   );
+
+  const users = [
+    {
+      name: 'John',
+      email: 'admin@example.com',
+      password: '123456',
+      role: UserRole.ADMIN,
+    },
+    {
+      name: 'Jane',
+      email: 'user@example.com',
+      password: '123456',
+      role: UserRole.USER,
+    },
+  ]
+  const hashedUsers = await Promise.all(
+    users.map(async (user) => ({
+      ...user,
+      password: await hash(user.password)
+    })
+    ));
+
+  await prisma.user.createMany({ data: hashedUsers });
+
   console.log('Seeding completed!');
 }
 
