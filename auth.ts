@@ -3,6 +3,7 @@ import { PrismaAdapter } from "@auth/prisma-adapter"
 import { prisma } from "./db/prisma"
 import Credentials from "next-auth/providers/credentials"
 import { compare } from './lib/encrypt';
+import { NextResponse } from "next/server";
 
 
 const config = {
@@ -47,7 +48,6 @@ const config = {
       session.user.id = token.sub;
       session.user.role = token.role;
       session.user.name = token.name;
-      console.log(token)
       // If there is an update, set the user name
       if (trigger === 'update') {
         session.user.name = user.name;
@@ -72,6 +72,21 @@ const config = {
         }
       }
       return token
+    },
+    authorized({ request, auth }: any) {
+      if (!request.cookies.get('sessionCartId')) {
+        const sessionCartId = crypto.randomUUID();
+        const newRequestHeaders = new Headers(request.headers)
+        const response = NextResponse.next({
+          request: {
+            headers: newRequestHeaders
+          }
+        })
+        response.cookies.set('sessionCartId', sessionCartId)
+        return response
+      } else {
+        return true
+      }
     }
   },
   pages: {

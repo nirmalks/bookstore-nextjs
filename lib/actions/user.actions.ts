@@ -55,12 +55,9 @@ export async function signUpUser(prevState: unknown, formData: FormData) {
       message: 'User signed up successfully'
     }
   } catch (error) {
-    console.log('insdie signup catch')
     if (isRedirectError(error)) {
       throw error;
     }
-
-
     return { success: false, message: formatError(error) }
   }
 }

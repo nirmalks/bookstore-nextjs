@@ -132,11 +132,16 @@ model VerificationToken {
 }
 
 model Cart {
-  id         String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId     String     @unique @db.Uuid
-  totalPrice Decimal    @default(0.0) @db.Decimal(10, 2)
-  items      CartItem[]
+  id            String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user          User?      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId        String?    @db.Uuid
+  sessionCartId String     @unique
+  itemsPrice    Decimal    @default(0.0) @db.Decimal(12, 2)
+  totalPrice    Decimal    @default(0.0) @db.Decimal(12, 2)
+  shippingPrice Decimal    @default(0.0) @db.Decimal(12, 2)
+  taxPrice      Decimal    @default(0.0) @db.Decimal(12, 2)
+  createdAt     DateTime   @default(now()) @db.Timestamp(6)
+  items         CartItem[]
 }
 
 model CartItem {
@@ -145,6 +150,9 @@ model CartItem {
   cartId   String  @db.Uuid
   book     Book    @relation(fields: [bookId], references: [id], onDelete: Cascade)
   bookId   String  @db.Uuid
+  name     String
+  slug     String
+  image    String
   quantity Int
   price    Decimal @db.Decimal(10, 2)
 }
