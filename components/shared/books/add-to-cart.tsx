@@ -3,47 +3,87 @@
 import { Button } from '@/components/ui/button';
 import { ToastAction } from '@/components/ui/toast';
 import { useToast } from '@/hooks/use-toast';
-import { addItemToCart } from '@/lib/actions/cart.actions';
-import { CartItem } from '@/types';
-import { Plus } from 'lucide-react';
+import { addItemToCart, removeItemFromCart } from '@/lib/actions/cart.actions';
+import { Cart, CartItem } from '@/types';
+import { Loader, Minus, Plus } from 'lucide-react';
 
 import { useRouter } from 'next/navigation';
+import { useTransition } from 'react';
 
-const AddToCart = ({ item }: { item: CartItem }) => {
+const AddToCart = ({ cart, cartItem }: { cart?: Cart; cartItem: CartItem }) => {
   const router = useRouter();
   const { toast } = useToast();
-  console.log('item', item);
-  const handleAddToCart = async () => {
-    const resp = await addItemToCart(item);
-    console.log(resp);
-    if (!resp.success) {
-      toast({
-        variant: 'destructive',
-        description: resp.message,
-      });
-      return;
-    }
+  const [isPending, startTransition] = useTransition();
 
-    toast({
-      description: `${item.name} added to cart`,
-      action: (
-        <ToastAction
-          className="bg-primary text-white hover:bg-gray-300"
-          altText="Go to Cart"
-          onClick={() => router.push('/cart')}
-        >
-          Go To Cart
-        </ToastAction>
-      ),
+  const handleAddToCart = async () => {
+    startTransition(async () => {
+      const resp = await addItemToCart(cartItem);
+
+      if (!resp.success) {
+        toast({
+          variant: 'destructive',
+          description: resp.message,
+        });
+        return;
+      }
+
+      toast({
+        description: resp.message,
+        action: (
+          <ToastAction
+            className="bg-primary text-white hover:bg-gray-300"
+            altText="Go to Cart"
+            onClick={() => router.push('/cart')}
+          >
+            Go To Cart
+          </ToastAction>
+        ),
+      });
     });
   };
-  return (
-    <div className="flex-center mt-4">
-      <Button className="w-full" type="button" onClick={handleAddToCart}>
-        <Plus />
-        Add to Cart
+
+  const handleRemoveFromCart = async () => {
+    startTransition(async () => {
+      const resp = await removeItemFromCart(cartItem.bookId);
+
+      toast({
+        variant: resp.success ? 'default' : 'destructive',
+        description: resp.message,
+      });
+    });
+  };
+
+  const itemAlreadyInCart =
+    cart && cart.items.find((item) => item.bookId === cartItem.bookId);
+
+  return itemAlreadyInCart ? (
+    <div className="flex">
+      <Button
+        className="w-full"
+        type="button"
+        variant="outline"
+        onClick={handleRemoveFromCart}
+      >
+        {isPending ? (
+          <Loader className="w-4 h-4 animate-spin" />
+        ) : (
+          <Minus className="w-4 h-4" />
+        )}
+      </Button>
+      <span className="px-2 py-2">{itemAlreadyInCart.quantity}</span>
+      <Button type="button" variant="outline" onClick={handleAddToCart}>
+        {isPending ? (
+          <Loader className="w-4 h-4 animate-spin" />
+        ) : (
+          <Plus className="w-4 h-4" />
+        )}
       </Button>
     </div>
+  ) : (
+    <Button className="w-full" type="button" onClick={handleAddToCart}>
+      <Plus />
+      Add to Cart
+    </Button>
   );
 };
 

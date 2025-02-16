@@ -5,6 +5,7 @@ import Rating from '@/components/shared/Rating';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { getBookBySlug } from '@/lib/actions/book.actions';
+import { getMyCart } from '@/lib/actions/cart.actions';
 
 import { notFound } from 'next/navigation';
 
@@ -16,6 +17,8 @@ const ProductDetailsPage = async (props: {
   const genres = book?.genres.map((book) => book.name);
   const authors = book?.authors.map((book) => book.name);
   if (!book) notFound();
+  const cart = await getMyCart();
+
   return (
     <>
       <section>
@@ -62,16 +65,19 @@ const ProductDetailsPage = async (props: {
                 </div>
 
                 {book.stock > 0 && (
-                  <AddToCart
-                    item={{
-                      bookId: book.id,
-                      name: book.title,
-                      slug: book.slug,
-                      price: Number(book.price),
-                      quantity: 1,
-                      image: book.imagePath!,
-                    }}
-                  ></AddToCart>
+                  <div className="flex-center">
+                    <AddToCart
+                      cart={cart}
+                      cartItem={{
+                        bookId: book.id,
+                        name: book.title,
+                        slug: book.slug,
+                        price: Number(book.price),
+                        quantity: 1,
+                        image: book.imagePath!,
+                      }}
+                    ></AddToCart>
+                  </div>
                 )}
               </CardContent>
             </Card>

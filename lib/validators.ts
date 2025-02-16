@@ -50,6 +50,7 @@ export const signUpFormSchema = z.object({
 })
 
 export const cartItemSchema = z.object({
+  id: z.string().uuid().optional(),
   bookId: z.string().min(1, 'Book id is required'),
   name: z.string().min(1, 'Name is required'),
   slug: z.string().min(1, 'Slug is required'),
@@ -65,5 +66,6 @@ export const insertCartSchema = z.object({
   shippingPrice: currencyFormat,
   taxPrice: currencyFormat,
   sessionCartId: z.string().min(1, 'session cart id is required'),
-  userId: z.string().optional()
+  userId: z.string().optional(),
+  id: z.string().uuid().optional(),
 })
