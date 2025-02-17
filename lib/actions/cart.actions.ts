@@ -18,7 +18,6 @@ export async function addItemToCart(data: CartItem) {
     const session = await auth();
     const userId = session?.user?.id;
     const cart = await getMyCart();
-    console.log('cart', cart)
     if (!cart) {
       console.log("Cart not found, creating a new one...");
     }
@@ -36,10 +35,6 @@ export async function addItemToCart(data: CartItem) {
         data: {
           userId: userId ?? null,
           sessionCartId,
-          itemsPrice: new Prisma.Decimal(prices.itemsPrice),
-          totalPrice: new Prisma.Decimal(prices.totalPrice),
-          shippingPrice: new Prisma.Decimal(prices.shippingPrice),
-          taxPrice: new Prisma.Decimal(prices.taxPrice),
           items: {
             create: [{
               bookId: item.bookId,
@@ -49,7 +44,8 @@ export async function addItemToCart(data: CartItem) {
               quantity: item.quantity,
               price: item.price
             }]
-          }
+          },
+          ...prices
         }
       })
 
@@ -69,7 +65,9 @@ export async function addItemToCart(data: CartItem) {
         if (book.stock < existingItem.quantity + 1) {
           throw new Error("Insufficient stock")
         }
-
+        (cart.items as CartItem[]).find(
+          (x) => x.bookId === item.bookId
+        )!.quantity = existingItem.quantity + 1;
         await prisma.cartItem.update({
           where: {
             id: existingItem.id,
@@ -80,6 +78,7 @@ export async function addItemToCart(data: CartItem) {
         });
       } else {
         if (book.stock < 1) throw new Error('Not enough stock')
+        cart.items.push(item);
         await prisma.cartItem.create({
           data: {
             cartId: cart.id,
@@ -92,7 +91,13 @@ export async function addItemToCart(data: CartItem) {
           }
         });
       }
-
+      console.log('exist cart update', cart)
+      await prisma.cart.update({
+        where: { id: cart.id },
+        data: {
+          ...calculatePrice(cart.items as CartItem[]),
+        },
+      });
       revalidatePath(`/books/${book?.slug}`)
       return ({
         success: true,
@@ -127,7 +132,7 @@ export async function getMyCart() {
 
   // Convert decimals and return
   return convertToPlainObject({
-    id: cart.id || undefined,
+    id: cart.id,
     sessionCartId: cart.sessionCartId,
     userId: cart.userId || undefined,
     items: cart.items.map((item) => ({
@@ -181,13 +186,32 @@ export async function removeItemFromCart(bookId: string) {
       const remainingItems = await prisma.cartItem.count({
         where: { cartId: cart.id },
       });
-
+      cart.items = (cart.items).filter(
+        (cartItem) => cartItem.bookId !== existingItem.bookId
+      );
       if (remainingItems === 0) {
         await prisma.cart.delete({ where: { id: cart.id } });
+      } else {
+        await prisma.cart.update({
+          where: { id: cart.id },
+          data: {
+            ...calculatePrice(cart.items as CartItem[]),
+          },
+        });
       }
     } else {
+      (cart.items as CartItem[]).find((cartItem) => cartItem.bookId === bookId)!.quantity =
+        existingItem.quantity - 1;
+
       await prisma.cartItem.update({ where: { id: existingItem.id }, data: { quantity: { decrement: 1 } } });
+      await prisma.cart.update({
+        where: { id: cart.id },
+        data: {
+          ...calculatePrice(cart.items as CartItem[]),
+        },
+      });
     }
+
 
     revalidatePath(`/books/${book?.slug}`)
     return ({
