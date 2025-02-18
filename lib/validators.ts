@@ -57,7 +57,7 @@ export const cartItemSchema = z.object({
   quantity: z.number().int().nonnegative('Quantity must be positive'),
   image: z.string().min(1, 'Image is required'),
   price: currencyFormat
-})
+});
 
 export const insertCartSchema = z.object({
   items: z.array(cartItemSchema),
@@ -68,4 +68,18 @@ export const insertCartSchema = z.object({
   sessionCartId: z.string().min(1, 'session cart id is required'),
   userId: z.string().optional(),
   id: z.string().uuid().optional(),
-})
+});
+
+export const shippingAddressSchema = z.object({
+  fullName: z.string().min(3, 'Name must be at least 3 characters'),
+  streetAddress: z.string().min(3, 'Address must be at least 3 characters'),
+  city: z.string().min(3, 'City must be at least 3 characters'),
+  state: z.string().min(3, 'State must be at least 3 characters'),
+  pinCode: z.string().min(3, 'Postal code must be at least 3 characters'),
+  country: z.string().min(3, 'Country must be at least 3 characters'),
+  lat: z.number().nullable().optional(),
+  lng: z.number().nullable().optional(),
+  id: z.string().optional(),
+  isDefault: z.boolean().optional()
+});
+
