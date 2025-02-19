@@ -178,13 +178,17 @@ model PurchaseOrder {
 }
 
 model OrderItem {
-  id       String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   order    PurchaseOrder @relation(fields: [orderId], references: [id], onDelete: Cascade)
   orderId  String        @db.Uuid
   book     Book          @relation(fields: [bookId], references: [id], onDelete: Cascade)
   bookId   String        @db.Uuid
   quantity Int
+  name     String
+  slug     String
+  image    String
   price    Decimal       @db.Decimal(10, 2)
+
+  @@id([orderId, bookId], map: "orderitems_orderId_bookId_pk")
 }
 
 model Address {

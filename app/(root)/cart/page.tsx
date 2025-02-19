@@ -1,6 +1,7 @@
 import { getMyCart } from '@/lib/actions/cart.actions';
-import CartTable from './cart-table';
+
 import { Cart } from '@/types';
+import FullCart from './full-cart';
 
 export const metadata = {
   title: 'Shopping cart',
@@ -8,7 +9,7 @@ export const metadata = {
 
 const CartPage = async () => {
   const cart = (await getMyCart()) as Cart;
-  return <CartTable cart={cart}></CartTable>;
+  return <FullCart cart={cart}></FullCart>;
 };
 
 export default CartPage;

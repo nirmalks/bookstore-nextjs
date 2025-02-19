@@ -14,10 +14,13 @@ const ShippingAddressPage = async () => {
   const userId = session?.user?.id;
   if (!userId) throw new Error('No user id');
   const allAddresses = (await getAddresses(userId)) || [];
-  console.log(allAddresses);
+
   return (
     <>
-      <ShippingAddressForm addresses={allAddresses}></ShippingAddressForm>
+      <ShippingAddressForm
+        addresses={allAddresses}
+        cart={cart}
+      ></ShippingAddressForm>
     </>
   );
 };
