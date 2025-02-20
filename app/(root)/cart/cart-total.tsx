@@ -1,16 +1,14 @@
-import { formatPrice } from '@/components/shared/books/BooksList';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { formatPrice } from '@/lib/utils';
 import { Cart } from '@/types';
 import { Loader, ArrowRight } from 'lucide-react';
-import { useRouter } from 'next/navigation';
-
 import { useTransition } from 'react';
-import { boolean } from 'zod';
+
 type CartTotalProps = {
   cart: Cart;
   buttonText: string;
-  buttonAction: () => void;
+  buttonAction: (e: React.MouseEvent) => void;
   isDisabled?: boolean;
 };
 const CartTotal = ({

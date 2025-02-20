@@ -22,7 +22,11 @@ import { z } from 'zod';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Loader, Pencil } from 'lucide-react';
-import { PAYMENT_METHODS, shippingAddressDefaultValues } from '@/lib/constants';
+import {
+  DEFAULT_PAYMENT_METHOD,
+  PAYMENT_METHODS,
+  shippingAddressDefaultValues,
+} from '@/lib/constants';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { updateUserAddress } from '@/lib/actions/user.actions';
 import {
@@ -33,6 +37,7 @@ import {
 } from '@/components/ui/accordion';
 import CartTable from '../cart/cart-table';
 import CartTotal from '../cart/cart-total';
+import { createOrder } from '@/lib/actions/order.actions';
 
 const formSchema = z.object({
   ...shippingAddressSchema.shape,
@@ -57,7 +62,7 @@ const ShippingPaymentForm = ({
   const [isEditing, setIsEditing] = useState(false);
   const [activeAccordion, setActiveAccordion] = useState<string>('address');
   const [addressList, setAddressList] = useState<ShippingAddress[]>(addresses);
-
+  const [paymentMethod, setPaymentMethod] = useState(DEFAULT_PAYMENT_METHOD);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -83,6 +88,7 @@ const ShippingPaymentForm = ({
     setActiveAccordion('address');
   };
 
+  const isPlaceOrderDisabled = !(selectedAddressId && paymentMethod);
   const onSubmit: SubmitHandler<z.infer<typeof formSchema>> = async (
     values
   ) => {
@@ -110,6 +116,17 @@ const ShippingPaymentForm = ({
       setActiveAccordion('payment');
       setAddressList(updatedAddresses);
     });
+  };
+
+  const handlePlaceOrder = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    const selectedAddress = addressList.find(
+      (a) => a.id === selectedAddressId
+    )!;
+    const resp = await createOrder(selectedAddress, paymentMethod);
+    if (resp.redirectTo) {
+      router.push(resp.redirectTo);
+    }
   };
 
   const handleAddressSelection = (addressId: string) => {
@@ -293,8 +310,11 @@ const ShippingPaymentForm = ({
                         <FormLabel>Select Payment Method</FormLabel>
                         <FormControl>
                           <RadioGroup
-                            onValueChange={field.onChange}
-                            defaultValue={field.value}
+                            onValueChange={(val) => {
+                              field.onChange(val);
+                              setPaymentMethod(val);
+                            }}
+                            defaultValue={paymentMethod}
                             className="flex flex-col space-y-2"
                           >
                             {PAYMENT_METHODS.map((payment) => (
@@ -306,7 +326,7 @@ const ShippingPaymentForm = ({
                                   <RadioGroupItem
                                     value={payment}
                                     id={payment}
-                                    checked={field.value === payment}
+                                    checked={paymentMethod === payment}
                                   />
                                 </FormControl>
                                 <FormLabel className="font-normal">
@@ -326,17 +346,6 @@ const ShippingPaymentForm = ({
             <AccordionItem value="payment" disabled={addresses.length === 0}>
               <AccordionTrigger>Order Summary</AccordionTrigger>
               <AccordionContent>
-                <div className="space-y-4">
-                  <FormField
-                    control={form.control}
-                    name="paymentMethod"
-                    render={({ field }) => (
-                      <FormItem className="space-y-3">
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
                 <CartTable cart={cart}></CartTable>
               </AccordionContent>
             </AccordionItem>
@@ -346,7 +355,8 @@ const ShippingPaymentForm = ({
           <CartTotal
             cart={cart}
             buttonText="Place Order"
-            buttonAction={() => router.push('/order-confirmation')}
+            buttonAction={handlePlaceOrder}
+            isDisabled={isPlaceOrderDisabled}
           ></CartTotal>
         </div>
       </div>

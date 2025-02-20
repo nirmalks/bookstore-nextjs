@@ -1,6 +1,5 @@
 'use server';
 
-
 import { convertToPlainObject, formatError, round2 } from "../utils";
 import { cookies } from "next/headers";
 import { auth } from "@/auth";
@@ -142,7 +141,7 @@ export async function getMyCart() {
       image: item.book.imagePath || '',
       quantity: item.quantity,
       price: Number(item.price),
-      id: item.id || undefined,
+
     })),
     itemsPrice: Number(cart.itemsPrice),
     totalPrice: Number(cart.totalPrice),

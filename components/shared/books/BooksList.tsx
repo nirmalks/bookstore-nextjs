@@ -1,13 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { Book } from '@/types';
-export const formatPrice = (price: number) => {
-  const dollarsAmount = new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'INR',
-  }).format(price);
-  return dollarsAmount;
-};
 
 const BooksList = ({ books }: any) => {
   return (
