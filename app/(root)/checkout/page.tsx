@@ -2,7 +2,7 @@ import { auth } from '@/auth';
 import { getMyCart } from '@/lib/actions/cart.actions';
 import { getAddresses } from '@/lib/actions/user.actions';
 import { redirect } from 'next/navigation';
-import ShippingAddressForm from './shipping-address-form';
+import CheckoutForm from './checkout-form';
 
 const ShippingAddressPage = async () => {
   const cart = await getMyCart();
@@ -17,10 +17,7 @@ const ShippingAddressPage = async () => {
 
   return (
     <>
-      <ShippingAddressForm
-        addresses={allAddresses}
-        cart={cart}
-      ></ShippingAddressForm>
+      <CheckoutForm addresses={allAddresses} cart={cart}></CheckoutForm>
     </>
   );
 };
