@@ -10,6 +10,7 @@ import {
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { PAYMENT_METHODS } from '@/lib/constants';
 import { Control } from 'react-hook-form';
+
 type PaymentMethodFormProps = {
   form: {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -17,12 +18,17 @@ type PaymentMethodFormProps = {
   };
   paymentMethod: string;
   setPaymentMethod: (value: string) => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  onCreateOrder: () => Promise<any>;
+  clientId: string;
 };
 
 const PaymentMethodForm = ({
   form,
   paymentMethod,
   setPaymentMethod,
+  onCreateOrder,
+  clientId,
 }: PaymentMethodFormProps) => {
   return (
     <FormField

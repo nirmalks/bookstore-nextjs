@@ -42,7 +42,7 @@ const CheckoutForm = ({
 }) => {
   const router = useRouter();
   const { toast } = useToast();
-
+  const clientId = process.env.PAYPAL_CLIENT_ID || '';
   const hasExistingAddresses = addresses.length > 0;
   const defaultAddress = addresses.find((addr) => addr.isDefault);
   const [selectedAddressId, setSelectedAddressId] = useState(
@@ -102,6 +102,13 @@ const CheckoutForm = ({
     }
   };
 
+  const onCreateOrder = async () => {
+    const selectedAddress = addressList.find(
+      (a) => a.id === selectedAddressId
+    )!;
+    return await createOrder(selectedAddress, paymentMethod);
+  };
+
   const handleAddressSelection = (addressId: string) => {
     setSelectedAddressId(addressId);
     setIsEditing(false);
@@ -135,6 +142,12 @@ const CheckoutForm = ({
                 ></ShippingAddressForm>
               </AccordionContent>
             </AccordionItem>
+            <AccordionItem value="summary" disabled={addresses.length === 0}>
+              <AccordionTrigger>Order Summary</AccordionTrigger>
+              <AccordionContent>
+                <CartTable cart={cart}></CartTable>
+              </AccordionContent>
+            </AccordionItem>
             <AccordionItem value="payment" disabled={addresses.length === 0}>
               <AccordionTrigger>Payment Method</AccordionTrigger>
               <AccordionContent>
@@ -143,14 +156,10 @@ const CheckoutForm = ({
                     form={form}
                     paymentMethod={paymentMethod}
                     setPaymentMethod={setPaymentMethod}
+                    onCreateOrder={onCreateOrder}
+                    clientId={clientId}
                   ></PaymentMethodForm>
                 </div>
-              </AccordionContent>
-            </AccordionItem>
-            <AccordionItem value="payment" disabled={addresses.length === 0}>
-              <AccordionTrigger>Order Summary</AccordionTrigger>
-              <AccordionContent>
-                <CartTable cart={cart}></CartTable>
               </AccordionContent>
             </AccordionItem>
           </Accordion>
@@ -158,7 +167,7 @@ const CheckoutForm = ({
         <div className="md:col-span-1 space-y-4  ml-4">
           <CartTotal
             cart={cart}
-            buttonText="Place Order"
+            buttonText="Place Order and Pay"
             buttonAction={handlePlaceOrder}
             isDisabled={isPlaceOrderDisabled}
           ></CartTotal>

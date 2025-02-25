@@ -27,6 +27,7 @@ export async function addItemToCart(data: CartItem) {
 
     if (!book) throw new Error('Book not found')
     const item = cartItemSchema.parse(data);
+    console.log(item)
     if (!cart) {
       const prices = calculatePrice([item]);
 
@@ -59,7 +60,7 @@ export async function addItemToCart(data: CartItem) {
         throw new Error("Cart ID is undefined");
       }
       const existingItem = (cart.items as CartItem[]).find((existing) => existing.bookId === item.bookId)
-
+      console.log(existingItem?.id)
       if (existingItem) {
         if (book.stock < existingItem.quantity + 1) {
           throw new Error("Insufficient stock")
@@ -141,7 +142,7 @@ export async function getMyCart() {
       image: item.book.imagePath || '',
       quantity: item.quantity,
       price: Number(item.price),
-
+      id: item.id ?? ''
     })),
     itemsPrice: Number(cart.itemsPrice),
     totalPrice: Number(cart.totalPrice),
@@ -178,6 +179,7 @@ export async function removeItemFromCart(bookId: string) {
     if (!cart) throw new Error("Cart not found")
 
     const existingItem = (cart.items as CartItem[]).find((item) => item.bookId === bookId)
+    console.log(existingItem)
     if (!existingItem) throw new Error("item not found in cart")
 
     if (existingItem.quantity === 1) {

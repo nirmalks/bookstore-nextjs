@@ -10,6 +10,7 @@ export type SectionTitleProps = {
 }
 
 export type Cart = z.infer<typeof insertCartSchema>;
+export type CartItemWithoutId = z.infer<typeof cartItemSchema>
 export type CartItem = z.infer<typeof cartItemSchema> & {
   id?: string
 };

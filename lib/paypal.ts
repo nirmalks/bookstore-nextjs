@@ -2,9 +2,11 @@ const base = process.env.PAYPAL_API_URL || 'https://api-m.sandbox.paypal.com';
 
 export const paypal = {
   createOrder: async function createOrder(price: number) {
+    if (!price || isNaN(price)) {
+      throw new Error('Invalid price value for PayPal order');
+    }
     const accessToken = await generateAccessToken();
     const url = `${base}/v2/checkout/orders`;
-
     const response = await fetch(url, {
       method: 'POST',
       headers: {
@@ -16,8 +18,8 @@ export const paypal = {
         purchase_units: [
           {
             amount: {
-              currency_code: 'USD',
-              value: price,
+              currency_code: 'INR',
+              value: price.toFixed(2),
             },
           },
         ],
