@@ -10,6 +10,7 @@ import { isRedirectError } from "next/dist/client/components/redirect-error";
 import { formatError, convertToPlainObject } from "../utils";
 import { paypal } from "../paypal";
 import { revalidatePath } from "next/cache";
+import { PAGE_SIZE } from "../constants";
 
 export async function createOrder(address: ShippingAddress, paymentMethod: string) {
   try {
@@ -58,6 +59,7 @@ export async function createOrder(address: ShippingAddress, paymentMethod: strin
 
     const insertedOrderId = await prisma.$transaction(async (tx) => {
       const insertedOrder = await tx.purchaseOrder.create({ data: order });
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       for (const { id, ...item } of cart.items as CartItem[]) {
         await tx.orderItem.create({
           data: {
@@ -238,3 +240,29 @@ export async function updateOrderToPaid({
 
 }
 
+export async function getAllOrders({
+  limit = PAGE_SIZE,
+  page,
+}: {
+  limit?: number,
+  page: number
+}) {
+  const session = await auth();
+  if (!session) throw new Error('Unauthorized to access this page')
+
+  const data = await prisma.purchaseOrder.findMany({
+    where: { userId: session?.user?.id },
+    orderBy: { createdAt: 'desc' },
+    take: limit,
+    skip: (page - 1) * limit
+  })
+
+  const count = await prisma.purchaseOrder.count({
+    where: { userId: session?.user?.id }
+  })
+
+  return {
+    data,
+    totalPages: Math.ceil(count / limit)
+  }
+}

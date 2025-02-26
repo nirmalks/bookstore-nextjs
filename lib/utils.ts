@@ -1,6 +1,6 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
-
+import queryString from 'query-string';
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
@@ -87,3 +87,27 @@ export const formatPrice = (price: number) => {
   }).format(price);
   return dollarsAmount;
 };
+
+export function formUrlQuery({
+  params,
+  key,
+  value,
+}: {
+  params: string;
+  key: string;
+  value: string | null;
+}) {
+  const query = queryString.parse(params);
+  console.log(query)
+  query[key] = value;
+
+  return queryString.stringifyUrl(
+    {
+      url: window.location.pathname,
+      query,
+    },
+    {
+      skipNull: true,
+    }
+  );
+}

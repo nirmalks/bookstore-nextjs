@@ -1,10 +1,13 @@
-import NextAuth, { NextAuthConfig } from "next-auth"
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
+import NextAuth from "next-auth"
 import { PrismaAdapter } from "@auth/prisma-adapter"
 import { prisma } from "./db/prisma"
 import Credentials from "next-auth/providers/credentials"
 import { compare } from './lib/encrypt';
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
+import { NextAuthConfig } from "next-auth";
 
 
 const config = {
@@ -46,7 +49,7 @@ const config = {
   callbacks: {
     async session({ session, user, trigger, token }: any) {
       // Set the user ID from the token
-      session.user.id = token.sub;
+      session.user.id = token.id;
       session.user.role = token.role;
       session.user.name = token.name;
       // If there is an update, set the user name
@@ -93,6 +96,10 @@ const config = {
             }
           }
         }
+      }
+
+      if (session?.user.name && trigger === 'update') {
+        token.name = session.user.name;
       }
       return token
     },
