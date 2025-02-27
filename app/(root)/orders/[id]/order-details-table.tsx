@@ -14,6 +14,13 @@ import { Order, OrderItem } from '@/types';
 import Link from 'next/link';
 import Image from 'next/image';
 import { BASE_IMAGE_URL } from '@/lib/constants';
+import { useTransition } from 'react';
+import { useToast } from '@/hooks/use-toast';
+import { Button } from '@/components/ui/button';
+import {
+  deliverOrder,
+  updateOrderToPaidCOD,
+} from '@/lib/actions/order.actions';
 
 const OrderDetailsTable = ({
   order,
@@ -37,6 +44,51 @@ const OrderDetailsTable = ({
     deliveredAt,
   } = order;
 
+  const MarkAsDeliveredButton = () => {
+    const [isPending, startTransition] = useTransition();
+    const { toast } = useToast();
+    return (
+      <Button
+        type="button"
+        disabled={isPending}
+        onClick={() => {
+          startTransition(async () => {
+            const resp = await deliverOrder(id);
+            toast({
+              variant: resp.success ? 'default' : 'destructive',
+              description: resp.message,
+            });
+          });
+        }}
+      >
+        {isPending ? 'Processing...' : 'Mark As Delivered'}
+      </Button>
+    );
+  };
+
+  const MarkAsPaidButton = () => {
+    const [isPending, startTransition] = useTransition();
+    const { toast } = useToast();
+
+    return (
+      <Button
+        type="button"
+        disabled={isPending}
+        onClick={() =>
+          startTransition(async () => {
+            const res = await updateOrderToPaidCOD(order.id);
+            toast({
+              variant: res.success ? 'default' : 'destructive',
+              description: res.message,
+            });
+          })
+        }
+      >
+        {isPending ? 'processing...' : 'Mark As Paid'}
+      </Button>
+    );
+  };
+
   return (
     <>
       <h1 className="py-4 text-2xl">Order {shortenId(id)}</h1>
@@ -52,6 +104,23 @@ const OrderDetailsTable = ({
                 </Badge>
               ) : (
                 <Badge variant="destructive">Not paid</Badge>
+              )}
+            </CardContent>
+          </Card>
+          <Card className="my-2">
+            <CardContent className="p-4 gap-4">
+              <h2 className="text-xl pb-4">Shipping Address</h2>
+              <p>{shippingAddress.fullName}</p>
+              <p className="mb-2">
+                {shippingAddress.streetAddress}, {shippingAddress.city}
+                {shippingAddress.pinCode}, {shippingAddress.country}
+              </p>
+              {isDelivered ? (
+                <Badge variant="secondary">
+                  Delivered at {formatDateTime(deliveredAt!).dateTime}
+                </Badge>
+              ) : (
+                <Badge variant="destructive">Not Delivered</Badge>
               )}
             </CardContent>
           </Card>
@@ -115,6 +184,9 @@ const OrderDetailsTable = ({
                 <div>Total</div>
                 <div>{formatPrice(totalPrice)}</div>
               </div>
+
+              {isAdmin && !isPaid && <MarkAsPaidButton />}
+              {isAdmin && isPaid && !isDelivered && <MarkAsDeliveredButton />}
             </CardContent>
           </Card>
         </div>

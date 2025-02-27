@@ -19,7 +19,7 @@ const OrderDetailsPage = async (props: { params: Promise<{ id: string }> }) => {
 
   const session = await auth();
 
-  if (order.userId !== session?.user?.id) {
+  if (session?.user?.role === 'USER' && order.userId !== session?.user?.id) {
     return redirect('/unauthorized');
   }
 

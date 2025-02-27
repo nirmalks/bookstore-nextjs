@@ -80,11 +80,11 @@ export const formatDateTime = (dateString: Date) => {
   };
 };
 
-export const formatPrice = (price: number) => {
+export const formatPrice = (price: number | string) => {
   const dollarsAmount = new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'INR',
-  }).format(price);
+  }).format(Number(price));
   return dollarsAmount;
 };
 
@@ -110,4 +110,10 @@ export function formUrlQuery({
       skipNull: true,
     }
   );
+}
+
+const NUMBER_FORMATTER = new Intl.NumberFormat('en-US');
+
+export function formatNumber(number: number) {
+  return NUMBER_FORMATTER.format(number);
 }

@@ -50,3 +50,7 @@ export async function getBookBySlug(slug: string) {
     genres: book.genres.map(g => g.genre)
   };
 }
+
+export async function getAllGenres() {
+  return await prisma.genre.findMany({})
+}
