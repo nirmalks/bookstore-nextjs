@@ -10,8 +10,8 @@ const links = [
     href: '/admin/overview',
   },
   {
-    title: 'Products',
-    href: '/admin/products',
+    title: 'Books',
+    href: '/admin/books',
   },
   {
     title: 'Orders',

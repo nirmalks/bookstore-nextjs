@@ -25,14 +25,21 @@ export const insertBookSchema = z.object({
   title: z.string(),
   slug: z.string(),
   stock: z.coerce.number(),
-  imagePath: z.string().nullable(),
+  images: z.array(z.string()).min(1, 'Book must have at least one image'),
   isbn: z.string(),
-  publishedDate: z.date(),
+  publishedDate: z.coerce.date(),
   price: currencyFormat,
   authors: z.array(authorSchema),
   genres: z.array(genreSchema),
   rating: z.coerce.number(),
-  numReviews: z.number()
+  numReviews: z.number(),
+  description: z.string(),
+  banner: z.string().optional().nullable(),
+  isFeatured: z.boolean()
+})
+
+export const updateBookSchema = insertBookSchema.extend({
+  id: z.string().min(1, 'Id is required'),
 })
 
 export const signInFormSchema = z.object({
@@ -130,3 +137,12 @@ export const updateUserSchema = updateProfileSchema.extend({
   id: z.string().min(1, 'ID is required'),
   role: UserRoleEnum,
 });
+
+export const insertAuthorSchema = z.object({
+  name: z.string().min(1, 'name is required'),
+  bio: z.string(),
+})
+
+export const updateAuthorSchema = insertAuthorSchema.extend({
+  id: z.string()
+})

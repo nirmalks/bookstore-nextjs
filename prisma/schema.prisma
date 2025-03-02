@@ -45,7 +45,7 @@ model Book {
   stock         Int
   isbn          String       @unique @db.VarChar(20)
   publishedDate DateTime     @db.Date
-  imagePath     String?      @db.VarChar(255)
+  images        String[]     @db.VarChar(255)
   description   String?
   authors       BookAuthor[]
   genres        BookGenre[]
@@ -54,6 +54,8 @@ model Book {
   rating        Decimal      @default(0) @db.Decimal(3, 2)
   numReviews    Int          @default(0)
   Review        Review[]
+  banner        String?
+  isFeatured    Boolean      @default(false)
 }
 
 model BookAuthor {

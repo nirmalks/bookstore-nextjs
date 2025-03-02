@@ -34,3 +34,25 @@ export const DEFAULT_PAYMENT_METHOD =
 export const PAYPAL_PAYMENT_METHOD = 'PayPal';
 
 export const PAGE_SIZE = Number(process.env.PAGE_SIZE) || 10
+
+export const bookDefaultValues = {
+  title: '',
+  slug: '',
+  genres: [],
+  images: [],
+  description: '',
+  price: 0,
+  stock: 0,
+  rating: 0,
+  numReviews: 0,
+  isFeatured: false,
+  banner: undefined,
+  authors: [],
+  publishedDate: new Date(),
+  id: ''
+};
+
+export const authorDefaultValues = {
+  name: '',
+  bio: '',
+};
