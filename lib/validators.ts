@@ -1,6 +1,9 @@
 import { z } from 'zod';
 import { formatNumberWithDecimal } from './utils';
 import { PAYMENT_METHODS } from './constants';
+import { zodDecimal, ZodDecimal } from './zodDecimal';
+import { Decimal } from '@prisma/client/runtime/library';
+import { Prisma } from '@prisma/client';
 
 const genreSchema = z.object({
   genre: z.object({
@@ -13,6 +16,7 @@ const authorSchema = z.object({
   author: z.object({
     id: z.string(),
     name: z.string(),
+    bio: z.string().optional().nullable()
   }),
 });
 const currencyFormat = z
@@ -21,6 +25,7 @@ const currencyFormat = z
     (value) => /^\d+(\.\d{2})?$/.test(formatNumberWithDecimal(Number(value))),
     'Price must have exactly 2 decimal places'
   )
+
 export const insertBookSchema = z.object({
   title: z.string(),
   slug: z.string(),

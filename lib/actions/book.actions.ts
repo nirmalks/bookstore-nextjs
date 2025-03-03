@@ -6,6 +6,8 @@ import { convertToPlainObject, formatError } from "../utils";
 import { revalidatePath } from "next/cache";
 import { insertBookSchema, updateBookSchema } from "../validators";
 import { z } from "zod";
+import { Book } from "@/types";
+import { Prisma } from "@prisma/client";
 
 export async function getLatestBooks() {
   const data = await prisma.book.findMany({
@@ -61,12 +63,27 @@ export async function getAllGenres() {
   return await prisma.genre.findMany({})
 }
 
-export async function getBookById(id: string) {
+export async function getBookById(id: string): Promise<Book | null> {
   const data = await prisma.book.findFirst({
     where: { id: id },
+    include: {
+      authors: {
+        include: { author: true },
+      },
+      genres: {
+        include: { genre: true },
+      },
+    },
   });
 
-  return convertToPlainObject(data);
+  if (!data) throw new Error('Book not found')
+  return {
+    ...convertToPlainObject(data),
+    price: Number(data.price),
+    rating: Number(data.rating),
+    description: data.description ?? "",
+  };
+
 }
 
 export async function getAllBooks({
@@ -74,13 +91,64 @@ export async function getAllBooks({
   limit = PAGE_SIZE,
   page,
   genre,
+  price,
+  rating,
 }: {
   query: string;
   limit?: number;
   page: number;
   genre?: string;
+  price?: string;
+  rating?: string;
 }) {
+  const queryFilter: Prisma.BookWhereInput =
+    query && query !== 'all' ? {
+      title: {
+        contains: query,
+        mode: 'insensitive'
+      } as Prisma.StringFilter
+    } : {}
+
+  const genreFilter: Prisma.BookWhereInput =
+    genre && genre !== 'all' ? {
+      genres: {
+        some: {
+          genre: {
+            name: {
+              contains: query,
+              mode: 'insensitive'
+            }
+          }
+        }
+      }
+    } : {}
+  console.log(genreFilter)
+  console.log(price)
+  const priceFilter: Prisma.BookWhereInput =
+    price && price !== 'all'
+      ? {
+        price: {
+          gte: Number(price.split('-')[0]),
+          lte: Number(price.split('-')[1]),
+        },
+      }
+      : {};
+  console.log(priceFilter)
+  const ratingFilter =
+    rating && rating !== 'all'
+      ? {
+        rating: {
+          gte: Number(rating),
+        },
+      }
+      : {};
   const data = await prisma.book.findMany({
+    where: {
+      ...queryFilter,
+      ...genreFilter,
+      ...priceFilter,
+      ...ratingFilter,
+    },
     skip: (page - 1) * limit,
     take: limit,
     include: { genres: { include: { genre: true } } }
@@ -152,10 +220,21 @@ export async function updateBook(data: z.infer<typeof updateBookSchema>) {
     });
 
     if (!bookExists) throw new Error('Book not found');
-
     await prisma.book.update({
       where: { id: book.id },
-      data: book,
+      data: {
+        ...book,
+        authors: {
+          connect: book.authors?.map((author) => ({
+            bookId_authorId: { bookId: book.id, authorId: author.author.id },
+          })) ?? [],
+        },
+        genres: {
+          connect: book.genres?.map((genre) => ({
+            bookId_genreId: { bookId: book.id, genreId: genre.genre.id },
+          })) ?? [],
+        },
+      },
     });
 
     revalidatePath('/admin/books');

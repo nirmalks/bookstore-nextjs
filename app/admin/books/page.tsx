@@ -13,7 +13,7 @@ import { deleteBook, getAllBooks } from '@/lib/actions/book.actions';
 import { formatPrice, shortenId } from '@/lib/utils';
 import Link from 'next/link';
 
-const AdminProductsPage = async (props: {
+const AdminBooksPage = async (props: {
   searchParams: Promise<{
     page: string;
     query: string;
@@ -22,8 +22,8 @@ const AdminProductsPage = async (props: {
 }) => {
   const searchParams = await props.searchParams;
   const page = Number(searchParams.page) || 1;
-  const query = Number(searchParams.query) || '';
-  const genre = Number(searchParams.genre) || '';
+  const query = searchParams.query || '';
+  const genre = searchParams.genre || '';
 
   const books = await getAllBooks({
     query: query,
@@ -39,7 +39,7 @@ const AdminProductsPage = async (props: {
           {query && (
             <div>
               Filtered by <i>&quot;{query}&quot;</i>{' '}
-              <Link href="/admin/products">
+              <Link href="/admin/books">
                 <Button variant="outline" size="sm">
                   Remove Filter
                 </Button>
@@ -94,4 +94,4 @@ const AdminProductsPage = async (props: {
   );
 };
 
-export default AdminProductsPage;
+export default AdminBooksPage;

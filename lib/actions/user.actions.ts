@@ -5,7 +5,7 @@ import { paymentMethodSchema, shippingAddressSchema, signInFormSchema, signUpFor
 import { isRedirectError } from "next/dist/client/components/redirect-error";
 import { hash } from "../encrypt";
 import { prisma } from "@/db/prisma";
-import { convertToPlainObject, formatError } from "../utils";
+import { formatError } from "../utils";
 import { ShippingAddress } from "@/types";
 import { revalidatePath } from "next/cache";
 import { Prisma } from "@prisma/client";
