@@ -2,12 +2,12 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Book } from '@/types';
 
-const BooksList = ({ books }: any) => {
+const BooksList = ({ books }: { books: Book[] }) => {
   return (
     <div className="mt-12 grid gap-y-8">
       {books.map((book: Book) => {
-        const { title, price, imagePath } = book;
-        const image = `/images/${imagePath}`;
+        const { title, price, images } = book;
+        const image = images[0];
         return (
           <Link
             key={book.id}

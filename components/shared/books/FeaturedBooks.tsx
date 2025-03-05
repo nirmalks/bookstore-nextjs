@@ -1,8 +1,8 @@
 import SectionTitle from '../SectionTitle';
 import BooksGrid from './BooksGrid';
-import { Book } from '@/types';
+import { BookWithoutNesting } from '@/types';
 
-const FeaturedBooks = ({ books }: { books: Book[] }) => {
+const FeaturedBooks = ({ books }: { books: BookWithoutNesting[] }) => {
   return (
     <div className="pt-24 p-8">
       <SectionTitle text="Featured Books" />

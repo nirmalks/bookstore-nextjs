@@ -1,15 +1,15 @@
-import { Book } from '@/types';
+import { BookWithoutNesting } from '@/types';
 import Image from 'next/image';
 import Link from 'next/link';
 import { JSX } from 'react';
-const BooksGrid = ({ books }: { books: Book[] }): JSX.Element => {
+const BooksGrid = ({ books }: { books: BookWithoutNesting[] }): JSX.Element => {
   console.log(books);
   return (
     <div className="pt-24 p-8 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-      {books.map((book: Book) => {
-        const { title, price, imagePath } = book;
+      {books.map((book: BookWithoutNesting) => {
+        const { title, price, images } = book;
 
-        const image = `/images/${imagePath}`;
+        const image = images[0];
         return (
           <Link
             key={book.id}

@@ -36,3 +36,19 @@ export type PaymentResult = z.infer<typeof paymentResultSchema>;
 export type Author = z.infer<typeof insertAuthorSchema> & {
   id: string
 }
+
+export type BookWithoutNesting = {
+  title: string;
+  slug: string;
+  stock: number;
+  images: string[];
+  isbn: string;
+  publishedDate: Date;
+  price: number;
+  id: string;
+  rating: number;
+  numReviews: number;
+  description: string | null;
+  banner: string | null;
+  isFeatured: boolean;
+}

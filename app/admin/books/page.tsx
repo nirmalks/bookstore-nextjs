@@ -17,18 +17,15 @@ const AdminBooksPage = async (props: {
   searchParams: Promise<{
     page: string;
     query: string;
-    genre: string;
   }>;
 }) => {
   const searchParams = await props.searchParams;
   const page = Number(searchParams.page) || 1;
   const query = searchParams.query || '';
-  const genre = searchParams.genre || '';
 
   const books = await getAllBooks({
     query: query,
     page,
-    genre,
   });
 
   return (

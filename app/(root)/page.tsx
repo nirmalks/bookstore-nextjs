@@ -1,12 +1,13 @@
 import Hero from '@/components/hero';
 import FeaturedBooks from '@/components/shared/books/FeaturedBooks';
-import { getLatestBooks } from '@/lib/actions/book.actions';
+import { getFeaturedBooks } from '@/lib/actions/book.actions';
 
 export default async function HomePage() {
-  const books = await getLatestBooks();
+  const books = await getFeaturedBooks();
+  console.log(books);
   return (
     <>
-      <Hero></Hero>
+      <Hero books={books}></Hero>
       <FeaturedBooks books={books}></FeaturedBooks>
     </>
   );

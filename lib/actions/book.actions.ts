@@ -93,6 +93,7 @@ export async function getAllBooks({
   genre,
   price,
   rating,
+  sort,
 }: {
   query: string;
   limit?: number;
@@ -100,6 +101,7 @@ export async function getAllBooks({
   genre?: string;
   price?: string;
   rating?: string;
+  sort?: string;
 }) {
   const queryFilter: Prisma.BookWhereInput =
     query && query !== 'all' ? {
@@ -115,15 +117,14 @@ export async function getAllBooks({
         some: {
           genre: {
             name: {
-              contains: query,
+              contains: genre,
               mode: 'insensitive'
             }
           }
         }
       }
     } : {}
-  console.log(genreFilter)
-  console.log(price)
+
   const priceFilter: Prisma.BookWhereInput =
     price && price !== 'all'
       ? {
@@ -133,7 +134,6 @@ export async function getAllBooks({
         },
       }
       : {};
-  console.log(priceFilter)
   const ratingFilter =
     rating && rating !== 'all'
       ? {
@@ -149,17 +149,27 @@ export async function getAllBooks({
       ...priceFilter,
       ...ratingFilter,
     },
+    orderBy:
+      sort === 'lowest'
+        ? { price: 'asc' }
+        : sort === 'highest'
+          ? { price: 'desc' }
+          : sort === 'rating'
+            ? { rating: 'desc' }
+            : { rating: 'asc' },
     skip: (page - 1) * limit,
     take: limit,
     include: { genres: { include: { genre: true } } }
   });
-
   const dataCount = await prisma.book.count();
 
-  return {
-    data,
+  return data?.map((book) => ({
+    ...convertToPlainObject(book),
+    price: Number(book.price),
+    rating: Number(book.rating),
+    description: book.description ?? "",
     totalPages: Math.ceil(dataCount / limit),
-  };
+  })) ?? [];
 }
 
 export async function deleteBook(id: string) {
@@ -183,8 +193,6 @@ export async function deleteBook(id: string) {
 export async function createBook(data: z.infer<typeof insertBookSchema>) {
   try {
     const book = insertBookSchema.parse(data);
-    console.log("Authors Connect:", book.authors.map((a) => ({ id: a.author.id })));
-    console.log("Genres Connect:", book.genres.map((g) => ({ id: g.genre.id })));
     await prisma.book.create({
       data: {
         ...book,
@@ -246,4 +254,41 @@ export async function updateBook(data: z.infer<typeof updateBookSchema>) {
   } catch (error) {
     return { success: false, message: formatError(error) };
   }
+}
+
+export async function getAllGenresWithCount() {
+  const genres = await prisma.bookGenre.groupBy(
+    {
+      by: ['genreId'],
+      _count: true
+    }
+  )
+
+  return await Promise.all(
+    genres.map(async (g) => {
+      const genre = await prisma.genre.findUnique({
+        where: { id: g.genreId },
+        select: { name: true }
+      });
+
+      return {
+        genre: genre?.name || 'Unknown',
+        count: g._count
+      };
+    })
+  );
+}
+
+export async function getFeaturedBooks() {
+  const books = await prisma.book.findMany({
+    where: { isFeatured: true },
+    take: 4
+  })
+
+  return books.map((book) => ({
+    ...convertToPlainObject(book),
+    price: Number(book.price),
+    rating: Number(book.rating),
+    description: book.description ?? "",
+  }));
 }

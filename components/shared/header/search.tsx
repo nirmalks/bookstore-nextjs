@@ -12,12 +12,11 @@ import { getAllGenres } from '@/lib/actions/book.actions';
 import { SearchIcon } from 'lucide-react';
 
 const Search = async () => {
-  const categories = await getAllGenres();
-
+  const genres = await getAllGenres();
   return (
     <form action="/search" method="GET">
       <div className="flex w-full max-w-sm items-center space-x-2">
-        <Select name="category">
+        <Select name="genre">
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="All" />
           </SelectTrigger>
@@ -25,9 +24,9 @@ const Search = async () => {
             <SelectItem key="All" value="all">
               All
             </SelectItem>
-            {categories.map((x) => (
-              <SelectItem key={x.name} value={x.name}>
-                {x.name}
+            {genres.map((genre) => (
+              <SelectItem key={genre.name} value={genre.name}>
+                {genre.name}
               </SelectItem>
             ))}
           </SelectContent>

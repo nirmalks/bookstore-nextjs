@@ -1,24 +1,11 @@
 'use client';
-import prob from '../public/images/prob.jpg';
-import Image from 'next/image';
-import harry from '../public/images/harry_potter.jpg';
-import alchemist from '../public/images/the_alchemist.jpg';
-import Link from 'next/link';
-import { Card, CardContent } from './ui/card';
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselPrevious,
-  CarouselNext,
-} from './ui/carousel';
 
-export const Hero = () => {
-  const data = [
-    { image: prob, alt: 'probablility' },
-    { image: harry, alt: 'harry potter' },
-    { image: alchemist, alt: 'alchemist' },
-  ];
+import Link from 'next/link';
+
+import BooksCarousel from './shared/books/books-carousel';
+import { BookWithoutNesting } from '@/types';
+
+export const Hero = ({ books }: { books: BookWithoutNesting[] }) => {
   return (
     <section className="grid grid-cols-1 md:grid-cols-2 mx-4 gap-4">
       <div className="place-items-center">
@@ -37,27 +24,7 @@ export const Hero = () => {
         </div>
       </div>
       <div className="md:ml-12 carousel max-w-full ">
-        <Carousel className="w-full max-w-sm">
-          <CarouselContent>
-            {Array.from({ length: 3 }).map((_, index) => (
-              <CarouselItem key={index} className="md:basis-1/2 lg:basis-full">
-                <div className="p-1">
-                  <Card>
-                    <CardContent className="flex  items-center justify-center p-6">
-                      <Image
-                        src={data[index].image}
-                        className="w-full rounded-lg h-[250]"
-                        alt={data[index].alt}
-                      />
-                    </CardContent>
-                  </Card>
-                </div>
-              </CarouselItem>
-            ))}
-          </CarouselContent>
-          <CarouselPrevious />
-          <CarouselNext />
-        </Carousel>
+        <BooksCarousel books={books}></BooksCarousel>
       </div>
     </section>
   );
