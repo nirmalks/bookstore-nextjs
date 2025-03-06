@@ -60,3 +60,9 @@ export const authorDefaultValues = {
 };
 
 export const USER_ROLES = Object.values(UserRole)
+
+export const reviewFormDefaultValues = {
+  title: '',
+  comment: '',
+  rating: 0,
+}

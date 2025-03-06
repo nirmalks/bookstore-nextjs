@@ -8,6 +8,8 @@ import { getBookBySlug } from '@/lib/actions/book.actions';
 import { getMyCart } from '@/lib/actions/cart.actions';
 
 import { notFound } from 'next/navigation';
+import ReviewList from './review-list';
+import { auth } from '@/auth';
 
 const ProductDetailsPage = async (props: {
   params: Promise<{ slug: string }>;
@@ -17,6 +19,8 @@ const ProductDetailsPage = async (props: {
   const genres = book?.genres.map((book) => book.name);
   const authors = book?.authors.map((book) => book.name);
   if (!book) notFound();
+  const session = await auth();
+  const userId = session?.user?.id;
   const cart = await getMyCart();
 
   return (
@@ -24,7 +28,7 @@ const ProductDetailsPage = async (props: {
       <section>
         <div className="grid grid-cols-1 md:grid-cols-5">
           <div className="col-span-2">
-            <ImagesDisplay images={[book.imagePath!]} />
+            <ImagesDisplay images={book.images} />
           </div>
           <div className="col-span-2">
             <div className="flex flex-col gap-6">
@@ -74,7 +78,7 @@ const ProductDetailsPage = async (props: {
                         slug: book.slug,
                         price: Number(book.price),
                         quantity: 1,
-                        image: book.imagePath!,
+                        image: book.images![0],
                       }}
                     ></AddToCart>
                   </div>
@@ -83,6 +87,14 @@ const ProductDetailsPage = async (props: {
             </Card>
           </div>
         </div>
+      </section>
+      <section className="mt-10">
+        <h2 className="h2-bold mb-5">Customer Reviews</h2>
+        <ReviewList
+          userId={userId || ''}
+          bookId={book.id}
+          bookSlug={book.slug}
+        />
       </section>
     </>
   );

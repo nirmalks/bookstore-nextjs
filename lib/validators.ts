@@ -151,3 +151,13 @@ export const insertAuthorSchema = z.object({
 export const updateAuthorSchema = insertAuthorSchema.extend({
   id: z.string()
 })
+
+export const insertReviewSchema = z.object({
+  rating: z.number().int()
+    .min(1, 'Rating must be at least 1')
+    .max(5, 'Rating must be at most 5'),
+  title: z.string().min(3, 'Title must be at least 3 characters'),
+  description: z.string().min(3, 'Description must be at least 3 characters'),
+  bookId: z.string().min(1, 'Book is required'),
+  userId: z.string().min(1, 'User is required'),
+})

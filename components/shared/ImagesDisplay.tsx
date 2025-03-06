@@ -1,5 +1,4 @@
 'use client';
-import { BASE_IMAGE_URL } from '@/lib/constants';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
 import { useState } from 'react';
@@ -9,7 +8,7 @@ const ImagesDisplay = ({ images }: { images: string[] }) => {
   return (
     <div className="space-y-6">
       <Image
-        src={`${BASE_IMAGE_URL}${images[current]}`}
+        src={`${images[current]}`}
         alt="image"
         width={400}
         height={400}
@@ -26,12 +25,7 @@ const ImagesDisplay = ({ images }: { images: string[] }) => {
                 current === index && 'border-orange-500'
               )}
             >
-              <Image
-                src={`${BASE_IMAGE_URL}${image}`}
-                alt="image"
-                width={100}
-                height={100}
-              />
+              <Image src={`${image}`} alt="image" width={100} height={100} />
             </div>
           );
         })}

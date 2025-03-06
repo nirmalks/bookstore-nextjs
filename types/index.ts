@@ -1,4 +1,4 @@
-import { cartItemSchema, insertAuthorSchema, insertBookSchema, insertCartSchema, insertOrderItemSchema, insertOrderSchema, paymentResultSchema, shippingAddressSchema } from '@/lib/validators';
+import { cartItemSchema, insertAuthorSchema, insertBookSchema, insertCartSchema, insertOrderItemSchema, insertOrderSchema, insertReviewSchema, paymentResultSchema, shippingAddressSchema } from '@/lib/validators';
 import { z } from 'zod';
 
 export type Book = z.infer<typeof insertBookSchema> & {
@@ -52,3 +52,9 @@ export type BookWithoutNesting = {
   banner: string | null;
   isFeatured: boolean;
 }
+
+export type Review = z.infer<typeof insertReviewSchema> & {
+  id: string;
+  createdAt: Date;
+  user?: { name: string };
+};
