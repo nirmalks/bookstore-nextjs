@@ -12,6 +12,7 @@ import { paypal } from "../paypal";
 import { revalidatePath } from "next/cache";
 import { PAGE_SIZE } from "../constants";
 import { Prisma } from "@prisma/client";
+import { sendPurchaseReceipt } from "@/email";
 
 export async function createOrder(address: ShippingAddress, paymentMethod: string) {
   try {
@@ -84,8 +85,25 @@ export async function createOrder(address: ShippingAddress, paymentMethod: strin
         },
       });
 
+
+
       return insertedOrder.id;
     });
+
+    const paymentResult = {
+      id: insertedOrderId,
+      email_address: '',
+      status: 'COMPLETED',
+      pricePaid: order.itemsPrice.toString(),
+    }
+    await prisma.purchaseOrder.update({
+      where: { id: insertedOrderId },
+      data: {
+        paymentResult
+      },
+    });
+
+    updateOrderToPaid({ orderId: insertedOrderId, paymentResult })
 
     if (!insertedOrderId) throw new Error('Order not created');
 
@@ -125,18 +143,20 @@ export async function createPayPalOrder(orderId: string) {
 
     if (order) {
       const paypalOrder = await paypal.createOrder(Number(order.totalPrice));
-
+      const paymentResult = {
+        id: paypalOrder.id,
+        email_address: '',
+        status: 'COMPLETED',
+        pricePaid: order.itemsPrice.toString(),
+      }
       await prisma.purchaseOrder.update({
         where: { id: orderId },
         data: {
-          paymentResult: {
-            id: paypalOrder.id,
-            email_address: '',
-            status: '',
-            pricePaid: 0,
-          },
+          paymentResult
         },
       });
+
+      updateOrderToPaid({ orderId: orderId, paymentResult })
 
       return {
         success: true,
@@ -238,7 +258,23 @@ export async function updateOrderToPaid({
   });
 
   if (!updatedOrder) throw new Error('Order not found');
-
+  sendPurchaseReceipt(
+    {
+      order: {
+        ...updatedOrder,
+        itemsPrice: Number(updatedOrder.itemsPrice),
+        shippingPrice: Number(updatedOrder.shippingPrice),
+        taxPrice: Number(updatedOrder.taxPrice),
+        totalPrice: Number(updatedOrder.totalPrice),
+        items: updatedOrder.items.map((item) => ({
+          ...item,
+          price: Number(item.price),
+        })),
+        shippingAddress: updatedOrder.shippingAddress as ShippingAddress,
+        paymentResult: updatedOrder.paymentResult as PaymentResult
+      }
+    }
+  )
 }
 
 export async function getMyOrders({

@@ -6,7 +6,6 @@ import { auth } from "@/auth";
 import { prisma } from "@/db/prisma";
 import { cartItemSchema } from "../validators";
 import { revalidatePath } from "next/cache";
-import { Prisma } from "@prisma/client";
 import { CartItem } from "@/types";
 
 export async function addItemToCart(data: CartItem) {
@@ -27,7 +26,6 @@ export async function addItemToCart(data: CartItem) {
 
     if (!book) throw new Error('Book not found')
     const item = cartItemSchema.parse(data);
-    console.log(item)
     if (!cart) {
       const prices = calculatePrice([item]);
 
@@ -60,7 +58,6 @@ export async function addItemToCart(data: CartItem) {
         throw new Error("Cart ID is undefined");
       }
       const existingItem = (cart.items as CartItem[]).find((existing) => existing.bookId === item.bookId)
-      console.log(existingItem?.id)
       if (existingItem) {
         if (book.stock < existingItem.quantity + 1) {
           throw new Error("Insufficient stock")
@@ -78,7 +75,10 @@ export async function addItemToCart(data: CartItem) {
         });
       } else {
         if (book.stock < 1) throw new Error('Not enough stock')
-        cart.items.push(item);
+        cart.items.push({
+          ...item,
+          id: item.id ?? ''
+        });
         await prisma.cartItem.create({
           data: {
             cartId: cart.id,
@@ -91,7 +91,6 @@ export async function addItemToCart(data: CartItem) {
           }
         });
       }
-      console.log('exist cart update', cart)
       await prisma.cart.update({
         where: { id: cart.id },
         data: {
@@ -110,7 +109,6 @@ export async function addItemToCart(data: CartItem) {
       message: formatError(error)
     })
   }
-
 }
 
 export async function getMyCart() {
@@ -139,7 +137,7 @@ export async function getMyCart() {
       bookId: item.bookId,
       name: item.book.title,
       slug: item.book.slug,
-      image: item.book.imagePath || '',
+      image: item.book.images[0] || '',
       quantity: item.quantity,
       price: Number(item.price),
       id: item.id ?? ''

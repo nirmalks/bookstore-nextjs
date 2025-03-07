@@ -1,9 +1,6 @@
 import { z } from 'zod';
 import { formatNumberWithDecimal } from './utils';
 import { PAYMENT_METHODS } from './constants';
-import { zodDecimal, ZodDecimal } from './zodDecimal';
-import { Decimal } from '@prisma/client/runtime/library';
-import { Prisma } from '@prisma/client';
 
 const genreSchema = z.object({
   genre: z.object({
@@ -116,7 +113,7 @@ export const insertOrderSchema = z.object({
 });
 
 export const insertOrderItemSchema = z.object({
-  productId: z.string(),
+  bookId: z.string(),
   slug: z.string(),
   image: z.string(),
   name: z.string(),

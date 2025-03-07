@@ -1,6 +1,6 @@
 import { hash } from '@/lib/encrypt';
 import { PrismaClient, UserRole } from '@prisma/client';
-
+import booksData from './sample-data';
 const prisma = new PrismaClient();
 
 async function main() {
@@ -31,87 +31,10 @@ async function main() {
     prisma.genre.create({ data: { name: 'Dystopian' } }),
     prisma.genre.create({ data: { name: 'Classic' } }),
   ]);
-
-
   // Insert Books
-  const books = await prisma.$transaction([
-    prisma.book.create({
-      data: {
-        title: 'The Alchemist',
-        slug: 'the-alchemist',
-        price: 499.99,
-        stock: 10,
-        isbn: '978-3-16-148410-0',
-        publishedDate: new Date('2024-01-01'),
-        images: ['/images/the_alchemist.jpg'],
-        description: 'A philosophical novel inspiring readers to follow their dreams.',
-        rating: 4.6,
-        numReviews: 12,
-        banner: null,
-        isFeatured: false,
-      },
-    }),
-    prisma.book.create({
-      data: {
-        title: 'Harry Potter and the Sorcerer’s Stone',
-        slug: 'harry-potter-sorcerer-stone',
-        price: 899.99,
-        stock: 15,
-        isbn: '978-0-7475-3269-9',
-        publishedDate: new Date('1997-06-26'),
-        images: ['/images/harry_potter.jpg'],
-        description: 'The first book in J.K. Rowling’s Harry Potter series.',
-        rating: 4.6,
-        numReviews: 12,
-        banner: null,
-        isFeatured: false,
-      },
-    }),
-    prisma.book.create({
-      data: {
-        title: '1984',
-        slug: '1984',
-        price: 399.99,
-        stock: 20,
-        isbn: '978-0-452-28423-4',
-        publishedDate: new Date('1949-06-08'),
-        images: ['/images/1984.jpg'],
-        description: 'A dystopian novel by George Orwell.',
-        rating: 4.6,
-        numReviews: 12,
-        banner: null,
-        isFeatured: false,
-      },
-    }),
-    prisma.book.create({
-      data: {
-        title: 'Pride and Prejudice',
-        slug: 'pride-and-prejudice',
-        price: 299.99,
-        stock: 25,
-        isbn: '978-0-19-280238-5',
-        publishedDate: new Date('1813-01-28'),
-        images: ['/images/pride_prejudice.jpg'],
-        description: 'A classic novel by Jane Austen.',
-        rating: 4.6,
-        numReviews: 12,
-      },
-    }),
-    prisma.book.create({
-      data: {
-        title: 'The Great Gatsby',
-        slug: 'the-great-gatsby',
-        price: 349.99,
-        stock: 30,
-        isbn: '978-0-7432-7356-5',
-        publishedDate: new Date('1925-04-10'),
-        images: ['/images/great_gatsby.jpg'],
-        description: 'A novel by F. Scott Fitzgerald set in the Jazz Age.',
-        rating: 4.6,
-        numReviews: 12,
-      },
-    }),
-  ]);
+  const books = await prisma.$transaction(
+    booksData.map((book) => prisma.book.create({ data: book }))
+  );
 
   // Insert BookAuthor relations
   await prisma.$transaction([

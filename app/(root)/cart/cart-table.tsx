@@ -14,13 +14,13 @@ import Link from 'next/link';
 
 import { useTransition } from 'react';
 import Image from 'next/image';
-import { BASE_IMAGE_URL } from '@/lib/constants';
 import { Button } from '@/components/ui/button';
 import { addItemToCart, removeItemFromCart } from '@/lib/actions/cart.actions';
 import { Loader, Minus, Plus } from 'lucide-react';
 
 const CartTable = ({ cart }: { cart: Cart }) => {
   const { toast } = useToast();
+  console.log(cart.items);
   const [isPending, startTransition] = useTransition();
   return (
     <>
@@ -42,7 +42,7 @@ const CartTable = ({ cart }: { cart: Cart }) => {
                     className="flex items-center"
                   >
                     <Image
-                      src={`${BASE_IMAGE_URL}${item.image}`}
+                      src={`${item.image}`}
                       alt={item.name}
                       width={50}
                       height={50}
