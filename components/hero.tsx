@@ -4,8 +4,9 @@ import Link from 'next/link';
 
 import BooksCarousel from './shared/books/books-carousel';
 import { BookWithoutNesting } from '@/types';
+import { Button } from './ui/button';
 
-export const Hero = ({ books }: { books: BookWithoutNesting[] }) => {
+const Hero = ({ books }: { books: BookWithoutNesting[] }) => {
   return (
     <section className="grid grid-cols-1 md:grid-cols-2 mx-4 gap-4">
       <div className="place-items-center">
@@ -18,8 +19,8 @@ export const Hero = ({ books }: { books: BookWithoutNesting[] }) => {
           perferendis porro nobis.
         </p>
         <div className="mt-10">
-          <Link href="/books" className="btn btn-primary">
-            Visit our Full Collection
+          <Link href="/search" className="btn btn-primary">
+            <Button>Visit our Full Collection</Button>
           </Link>
         </div>
       </div>

@@ -9,7 +9,6 @@ export const metadata: Metadata = {
 
 const Profile = async () => {
   const session = await auth();
-  console.log('session', session);
   return (
     <SessionProvider session={session}>
       <div className="max-w-md mx-auto space-y-4">

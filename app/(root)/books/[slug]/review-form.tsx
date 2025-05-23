@@ -71,7 +71,6 @@ const ReviewForm = ({
   const onSubmit: SubmitHandler<z.infer<typeof insertReviewSchema>> = async (
     values
   ) => {
-    console.log(values);
     const resp = await createUpdateReview({
       ...values,
       rating: Number(values.rating),

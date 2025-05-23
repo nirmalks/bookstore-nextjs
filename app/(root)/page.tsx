@@ -4,7 +4,6 @@ import { getFeaturedBooks } from '@/lib/actions/book.actions';
 
 export default async function HomePage() {
   const books = await getFeaturedBooks();
-  console.log(books);
   return (
     <>
       <Hero books={books}></Hero>

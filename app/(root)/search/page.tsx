@@ -1,4 +1,5 @@
 import BookCard from '@/components/shared/books/book-card';
+import Pagination from '@/components/shared/pagination';
 import { Button } from '@/components/ui/button';
 import { getAllBooks, getAllGenres } from '@/lib/actions/book.actions';
 
@@ -29,7 +30,7 @@ const prices = [
 
 const ratings = [4, 3, 2, 1];
 
-const sortOrders = ['newest', 'lowest', 'highest', 'rating'];
+const sortOrders = ['newest', 'price-lowest', 'price-highest', 'rating'];
 
 export async function generateMetadata(props: {
   searchParams: Promise<{
@@ -107,7 +108,7 @@ const SearchPage = async (props: {
       page: page ?? '1',
     };
 
-    if (g) params.g = g;
+    if (g) params.genre = g;
     if (p) params.price = p;
     if (s) params.sort = s;
     if (r) params.rating = r;
@@ -116,7 +117,7 @@ const SearchPage = async (props: {
     return `/search?${new URLSearchParams(params).toString()}`;
   };
 
-  const books = await getAllBooks({
+  const { books, totalPages } = await getAllBooks({
     query: q,
     genre: genre,
     price,
@@ -130,7 +131,7 @@ const SearchPage = async (props: {
   return (
     <div className="grid md:grid-cols-5 md:gap-5">
       <div className="filter-links">
-        <div className="text-xl mb-2 mt-3">Department</div>
+        <div className="text-xl mb-2 mt-3">Genre</div>
         <div>
           <ul className="space-y-1">
             <li>
@@ -240,6 +241,7 @@ const SearchPage = async (props: {
             <BookCard key={book.id} book={book} />
           ))}
         </div>
+        <Pagination page={Number(page) || 1} totalPages={totalPages} />
       </div>
     </div>
   );

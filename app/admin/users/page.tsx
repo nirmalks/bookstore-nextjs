@@ -13,7 +13,6 @@ import {
 import { deleteUser, getAllUsers } from '@/lib/actions/user.actions';
 import { requireAdmin } from '@/lib/auth-guard';
 import { shortenId } from '@/lib/utils';
-import { UserRoleEnum } from '@/lib/validators';
 import { UserRole } from '@prisma/client';
 
 import { Metadata } from 'next';

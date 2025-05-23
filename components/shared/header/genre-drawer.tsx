@@ -32,7 +32,7 @@ const GenreDrawer = async () => {
                 asChild
               >
                 <DrawerClose asChild>
-                  <Link href={`/search?category=${g.genre}`}>
+                  <Link href={`/search?genre=${g.genre}`}>
                     {g.genre} ({g.count})
                   </Link>
                 </DrawerClose>

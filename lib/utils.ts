@@ -17,13 +17,16 @@ export function formatNumberWithDecimal(num: number): string {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function formatError(error: any) {
   if (error.name === 'ZodError') {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const fieldErrors = error.errors.map((err) => err.message)
     return fieldErrors.join(',')
   } else if (error.name === 'PrismaClientKnownRequestError' && error.code === 'P2002') {
     const field = error.meta?.target ? error.meta.target[0] : 'Field';
     return `${field.charAt(0).toUpperCase()} already exists`
   } else {
-
+    return typeof error.message === 'string'
+      ? error.message
+      : JSON.stringify(error.message);
   }
 }
 
@@ -98,7 +101,6 @@ export function formUrlQuery({
   value: string | null;
 }) {
   const query = queryString.parse(params);
-  console.log(query)
   query[key] = value;
 
   return queryString.stringifyUrl(

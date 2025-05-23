@@ -23,7 +23,7 @@ const AdminBooksPage = async (props: {
   const page = Number(searchParams.page) || 1;
   const query = searchParams.query || '';
 
-  const books = await getAllBooks({
+  const { books, totalPages } = await getAllBooks({
     query: query,
     page,
   });
@@ -62,7 +62,7 @@ const AdminBooksPage = async (props: {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {books.data.map((book) => (
+          {books.map((book) => (
             <TableRow key={book.id}>
               <TableCell>{shortenId(book.id)}</TableCell>
               <TableCell>{book.title}</TableCell>
@@ -84,9 +84,7 @@ const AdminBooksPage = async (props: {
           ))}
         </TableBody>
       </Table>
-      {books.totalPages > 1 && (
-        <Pagination page={page} totalPages={books.totalPages} />
-      )}
+      {totalPages > 1 && <Pagination page={page} totalPages={totalPages} />}
     </div>
   );
 };

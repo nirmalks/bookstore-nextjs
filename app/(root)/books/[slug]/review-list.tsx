@@ -1,7 +1,6 @@
 'use client';
 
 import Rating from '@/components/shared/Rating';
-import { Calendar } from '@/components/ui/calendar';
 import {
   Card,
   CardContent,
@@ -13,7 +12,7 @@ import { getReviews } from '@/lib/actions/review.actions';
 import { formatDateTime } from '@/lib/utils';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import ReviewForm from './review-form';
 import { Review } from '@/types';
 import { User } from 'lucide-react';
@@ -33,6 +32,10 @@ const ReviewList = ({
     const resp = await getReviews({ bookId });
     setReviews(resp.data);
   };
+
+  useEffect(() => {
+    reload();
+  }, []);
 
   return (
     <div className="space-y-4">

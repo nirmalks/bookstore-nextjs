@@ -4,8 +4,11 @@ import Image from 'next/image';
 import Menu from './menu';
 import GenreDrawer from './genre-drawer';
 import Search from './search';
+import { auth } from '@/auth';
 
-const Header = () => {
+const Header = async () => {
+  const session = await auth();
+  const role = session?.user?.role;
   return (
     <header className="w-full border-b">
       <div className="wrapper flex-between">
@@ -27,7 +30,7 @@ const Header = () => {
         <div className="hidden md:block">
           <Search />
         </div>
-        <Menu></Menu>
+        <Menu role={role}></Menu>
       </div>
     </header>
   );

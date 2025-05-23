@@ -6,7 +6,6 @@ import { ThemeProvider } from 'next-themes';
 import { Toaster } from '@/components/ui/toaster';
 
 export const metadata: Metadata = {
-  //title: `${APP_NAME}`,
   title: {
     template: `%s | Bookstore`,
     default: APP_NAME,
