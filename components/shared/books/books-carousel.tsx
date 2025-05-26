@@ -10,6 +10,7 @@ import { BookWithoutNesting } from '@/types';
 import Autoplay from 'embla-carousel-autoplay';
 import Image from 'next/image';
 const BooksCarousel = ({ books }: { books: BookWithoutNesting[] }) => {
+  console.log(books);
   return (
     <Carousel
       className="w-full max-w-sm"
@@ -27,6 +28,7 @@ const BooksCarousel = ({ books }: { books: BookWithoutNesting[] }) => {
       <CarouselContent>
         {books.map((book: BookWithoutNesting) => {
           const image = book.images[0];
+          console.log(image);
           return (
             <CarouselItem key={book.id} className="md:basis-1/2 lg:basis-full">
               <div className="p-1">
