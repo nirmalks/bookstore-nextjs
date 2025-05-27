@@ -7,7 +7,10 @@ jest.mock('lucide-react');
 describe('Hero', () => {
   it('renders title and books grid', () => {
     render(<Hero books={mockBook} />);
-    expect(screen.getByText(/Featured Books/i)).toBeInTheDocument();
-    expect(screen.getByText(/The Great Adventure/i)).toBeInTheDocument();
+    expect(screen.getByText(/We Love Books/i)).toBeInTheDocument();
+    expect(screen.getByAltText('The Great Adventure')).toBeInTheDocument();
+    expect(screen.getByRole('group')).toBeInTheDocument();
+    expect(screen.getByText(/Previous slide/i)).toBeInTheDocument();
+    expect(screen.getByText(/Next slide/i)).toBeInTheDocument();
   });
 });

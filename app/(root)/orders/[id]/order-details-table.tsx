@@ -10,7 +10,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { formatDateTime, formatPrice, shortenId } from '@/lib/utils';
-import { Order, OrderItem } from '@/types';
+import { OrderItem, PlainOrder } from '@/types';
 import Link from 'next/link';
 import Image from 'next/image';
 import { BASE_IMAGE_URL } from '@/lib/constants';
@@ -26,7 +26,7 @@ const OrderDetailsTable = ({
   order,
   isAdmin,
 }: {
-  order: Omit<Order, 'paymentResult'>;
+  order: Omit<PlainOrder, 'paymentResult'>;
   isAdmin: boolean;
 }) => {
   const {
@@ -43,7 +43,6 @@ const OrderDetailsTable = ({
     paidAt,
     deliveredAt,
   } = order;
-
   const MarkAsDeliveredButton = () => {
     const [isPending, startTransition] = useTransition();
     const { toast } = useToast();
@@ -141,7 +140,7 @@ const OrderDetailsTable = ({
                       <TableCell>
                         <Link
                           className="flex items-center"
-                          href={`/books/{item.slug}`}
+                          href={`/books/${item.slug}`}
                         >
                           <Image
                             src={`${BASE_IMAGE_URL}${item.image}`}

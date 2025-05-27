@@ -79,3 +79,29 @@ export type PlainCart = {
   shippingPrice: number;
   taxPrice: number;
 };
+
+
+
+
+export type PlainOrder = {
+  id: string;
+  userId: string;
+  status: 'PENDING' | 'PAID' | 'DELIVERED' | string;
+  shippingAddress: ShippingAddress;
+  itemsPrice: number;
+  shippingPrice: number;
+  taxPrice: number;
+  totalPrice: number;
+  isPaid: boolean;
+  paidAt: string | null;
+  isDelivered: boolean;
+  deliveredAt: string | null;
+  createdAt: string;
+  paymentMethod: string;
+  paymentResult: PaymentResult;
+  items: OrderItem[];
+  user?: {
+    name: string;
+    email: string;
+  };
+};

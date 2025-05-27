@@ -286,7 +286,6 @@ export async function getFeaturedBooks() {
     where: { isFeatured: true },
     take: 4
   })
-
   return books.map((book) => ({
     ...convertToPlainObject(book),
     price: Number(book.price),

@@ -26,27 +26,31 @@ const BooksCarousel = ({ books }: { books: BookWithoutNesting[] }) => {
       ]}
     >
       <CarouselContent>
-        {books.map((book: BookWithoutNesting) => {
-          const image = book.images[0];
-          console.log(image);
-          return (
-            <CarouselItem key={book.id} className="md:basis-1/2 lg:basis-full">
-              <div className="p-1">
-                <Card>
-                  <CardContent className="flex  items-center justify-center p-6">
-                    <Image
-                      src={image}
-                      className="w-full rounded-lg h-[250]"
-                      alt={book.title}
-                      width={200}
-                      height={200}
-                    />
-                  </CardContent>
-                </Card>
-              </div>
-            </CarouselItem>
-          );
-        })}
+        {books &&
+          books.map((book: BookWithoutNesting) => {
+            console.log(books.map((book) => book.id));
+            const image = book.images[0] || '/default-book-cover.jpg';
+            return (
+              <CarouselItem
+                key={book.id}
+                className="md:basis-1/2 lg:basis-full"
+              >
+                <div className="p-1">
+                  <Card>
+                    <CardContent className="flex  items-center justify-center p-6">
+                      <Image
+                        src={image}
+                        className="w-full rounded-lg h-[250]"
+                        alt={book.title}
+                        width={200}
+                        height={200}
+                      />
+                    </CardContent>
+                  </Card>
+                </div>
+              </CarouselItem>
+            );
+          })}
       </CarouselContent>
       <CarouselPrevious />
       <CarouselNext />

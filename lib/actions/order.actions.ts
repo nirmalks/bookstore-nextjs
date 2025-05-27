@@ -5,9 +5,9 @@ import { getMyCart } from "./cart.actions";
 import { getUserById } from "./user.actions";
 import { insertOrderSchema } from "../validators";
 import { prisma } from "@/db/prisma";
-import { CartItem, PaymentResult, ShippingAddress } from "@/types";
+import { CartItem, PaymentResult, PlainOrder, ShippingAddress } from "@/types";
 import { isRedirectError } from "next/dist/client/components/redirect-error";
-import { formatError, convertToPlainObject } from "../utils";
+import { formatError } from "../utils";
 import { paypal } from "../paypal";
 import { revalidatePath } from "next/cache";
 import { PAGE_SIZE } from "../constants";
@@ -85,8 +85,6 @@ export async function createOrder(address: ShippingAddress, paymentMethod: strin
         },
       });
 
-
-
       return insertedOrder.id;
     });
 
@@ -128,8 +126,23 @@ export async function getOrderById(orderId: string) {
       user: { select: { name: true, email: true } },
     },
   });
-
-  return convertToPlainObject(data);
+  if (!data) return null;
+  return {
+    ...data,
+    paidAt: data.paidAt?.toISOString() ?? null,
+    createdAt: data.createdAt?.toISOString() ?? null,
+    deliveredAt: data.deliveredAt?.toISOString() ?? null,
+    itemsPrice: Number(data.itemsPrice),
+    taxPrice: Number(data.taxPrice),
+    shippingPrice: Number(data.shippingPrice),
+    totalPrice: Number(data.totalPrice),
+    items: data.items.map(item => ({
+      ...item,
+      price: Number(item.price),
+    })),
+    shippingAddress: data.shippingAddress as ShippingAddress,
+    paymentResult: data.paymentResult as PaymentResult,
+  } as PlainOrder;
 }
 
 export async function createPayPalOrder(orderId: string) {

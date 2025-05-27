@@ -35,7 +35,8 @@ const ReviewList = ({
 
   useEffect(() => {
     reload();
-  });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="space-y-4">

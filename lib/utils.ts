@@ -10,7 +10,7 @@ export function cn(...inputs: ClassValue[]) {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function convertToPlainObject(obj: any): any {
   if (obj && typeof obj === 'object') {
-    // Check if it's a Prisma Decimal instance by duck-typing
+    // Prisma Decimal detection
     if (typeof obj.toFixed === 'function' && typeof obj.toString === 'function') {
       return Number(obj.toString());
     }
@@ -27,6 +27,7 @@ export function convertToPlainObject(obj: any): any {
     return newObj;
   }
 
+  return obj;
 }
 
 export function formatNumberWithDecimal(num: number): string {
@@ -71,7 +72,9 @@ export function shortenId(id: string) {
   return `..${id.substring(id.length - 6)}`;
 }
 
-export const formatDateTime = (dateString: Date) => {
+export const formatDateTime = (dateString: Date | string) => {
+  const date = new Date(dateString);
+
   const dateTimeOptions: Intl.DateTimeFormatOptions = {
     month: 'short',
     year: 'numeric',
@@ -80,33 +83,25 @@ export const formatDateTime = (dateString: Date) => {
     minute: 'numeric',
     hour12: true,
   };
+
   const dateOptions: Intl.DateTimeFormatOptions = {
     weekday: 'short',
     month: 'short',
     year: 'numeric',
     day: 'numeric',
   };
+
   const timeOptions: Intl.DateTimeFormatOptions = {
     hour: 'numeric',
     minute: 'numeric',
     hour12: true,
   };
-  const formattedDateTime: string = new Date(dateString).toLocaleString(
-    'en-US',
-    dateTimeOptions
-  );
-  const formattedDate: string = new Date(dateString).toLocaleString(
-    'en-US',
-    dateOptions
-  );
-  const formattedTime: string = new Date(dateString).toLocaleString(
-    'en-US',
-    timeOptions
-  );
+
   return {
-    dateTime: formattedDateTime,
-    dateOnly: formattedDate,
-    timeOnly: formattedTime,
+    dateTime: date.toLocaleString('en-US', dateTimeOptions),
+    dateOnly: date.toLocaleString('en-US', dateOptions),
+    timeOnly: date.toLocaleString('en-US', timeOptions),
+    iso: date.toISOString(),
   };
 };
 
