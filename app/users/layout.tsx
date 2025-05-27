@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { APP_NAME } from '@/lib/constants';
+import { APP_NAME, userRole } from '@/lib/constants';
 import Menu from '@/components/shared/header/menu';
 import MainNav from './main-nav';
 export default function UserLayout({
@@ -26,7 +26,7 @@ export default function UserLayout({
           </Link>
           <MainNav className="mx-6"></MainNav>
           <div className="ml-auto items-center flex space-x-4">
-            <Menu></Menu>
+            <Menu role={userRole}></Menu>
           </div>
         </div>
       </header>

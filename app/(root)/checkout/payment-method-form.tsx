@@ -27,8 +27,6 @@ const PaymentMethodForm = ({
   form,
   paymentMethod,
   setPaymentMethod,
-  onCreateOrder,
-  clientId,
 }: PaymentMethodFormProps) => {
   return (
     <FormField

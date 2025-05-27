@@ -128,7 +128,6 @@ export async function getOrderById(orderId: string) {
       user: { select: { name: true, email: true } },
     },
   });
-  console.log(data)
 
   return convertToPlainObject(data);
 }

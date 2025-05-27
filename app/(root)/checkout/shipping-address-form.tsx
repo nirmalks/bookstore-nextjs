@@ -40,7 +40,7 @@ const ShippingAddressForm: React.FC<ShippingAddressFormProps> = ({
   handleAddressSelection,
   onSubmit,
 }) => {
-  const [isPending, startTransition] = useTransition();
+  const [isPending] = useTransition();
 
   const handleEditAddress = (e: React.MouseEvent, address: ShippingAddress) => {
     e.preventDefault();

@@ -6,7 +6,7 @@ import { auth } from "@/auth";
 import { prisma } from "@/db/prisma";
 import { cartItemSchema } from "../validators";
 import { revalidatePath } from "next/cache";
-import { CartItem } from "@/types";
+import { CartItem, PlainCart } from "@/types";
 
 export async function addItemToCart(data: CartItem) {
   try {
@@ -128,7 +128,6 @@ export async function getMyCart() {
 
   if (!cart) return undefined;
 
-  // Convert decimals and return
   return convertToPlainObject({
     id: cart.id,
     sessionCartId: cart.sessionCartId,
@@ -146,7 +145,7 @@ export async function getMyCart() {
     totalPrice: Number(cart.totalPrice),
     shippingPrice: Number(cart.shippingPrice),
     taxPrice: Number(cart.taxPrice),
-  });
+  }) as PlainCart;
 }
 
 const calculatePrice = (items: CartItem[]) => {

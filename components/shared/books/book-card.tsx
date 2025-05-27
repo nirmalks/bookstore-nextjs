@@ -2,10 +2,10 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 
-import { BookWithoutNesting } from '@/types';
+import { Book, BookWithoutNesting } from '@/types';
 import Rating from '../Rating';
 
-const BookCard = ({ book }: { book: BookWithoutNesting }) => {
+const BookCard = ({ book }: { book: BookWithoutNesting | Book }) => {
   return (
     <Card className="w-full max-w-sm">
       <CardHeader className="p-0 items-center">

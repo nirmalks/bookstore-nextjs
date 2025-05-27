@@ -58,3 +58,24 @@ export type Review = z.infer<typeof insertReviewSchema> & {
   createdAt: Date;
   user?: { name: string };
 };
+
+export type PlainCartItem = {
+  id: string;
+  bookId: string;
+  name: string;
+  slug: string;
+  image: string;
+  quantity: number;
+  price: number;
+};
+
+export type PlainCart = {
+  id: string;
+  sessionCartId: string;
+  userId?: string;
+  items: PlainCartItem[];
+  itemsPrice: number;
+  totalPrice: number;
+  shippingPrice: number;
+  taxPrice: number;
+};

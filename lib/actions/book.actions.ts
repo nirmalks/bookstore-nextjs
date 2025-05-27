@@ -164,12 +164,12 @@ export async function getAllBooks({
   const dataCount = await prisma.book.count();
 
   return {
-    books: data?.map((book) => ({
+    books: (data?.map((book) => ({
       ...convertToPlainObject(book),
       price: Number(book.price),
       rating: Number(book.rating),
       description: book.description ?? "",
-    })) ?? [],
+    })) ?? []) as Book[],
     totalPages: Math.ceil(dataCount / limit),
   }
 }

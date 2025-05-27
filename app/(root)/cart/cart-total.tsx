@@ -17,7 +17,7 @@ const CartTotal = ({
   buttonAction,
   isDisabled,
 }: CartTotalProps) => {
-  const [isPending, startTransition] = useTransition();
+  const [isPending] = useTransition();
   return (
     <Card>
       <CardContent className="p-4 gap-4">

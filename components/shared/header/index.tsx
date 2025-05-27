@@ -1,4 +1,4 @@
-import { APP_NAME } from '@/lib/constants';
+import { APP_NAME, userRole } from '@/lib/constants';
 import Link from 'next/link';
 import Image from 'next/image';
 import Menu from './menu';
@@ -8,7 +8,7 @@ import { auth } from '@/auth';
 
 const Header = async () => {
   const session = await auth();
-  const role = session?.user?.role;
+  const role = session?.user?.role || userRole;
   return (
     <header className="w-full border-b">
       <div className="wrapper flex-between">

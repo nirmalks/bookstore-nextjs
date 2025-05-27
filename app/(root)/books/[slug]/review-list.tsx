@@ -35,7 +35,7 @@ const ReviewList = ({
 
   useEffect(() => {
     reload();
-  }, []);
+  });
 
   return (
     <div className="space-y-4">

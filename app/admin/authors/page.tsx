@@ -24,8 +24,7 @@ const AdminAuthorsPage = async (props: {
   const query = Number(searchParams.query) || '';
 
   const authors = await getAllAuthors({
-    query: query,
-    page,
+    page: page,
   });
 
   return (

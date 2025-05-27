@@ -8,11 +8,9 @@ import { z } from "zod";
 import { insertAuthorSchema, updateAuthorSchema } from "../validators";
 
 export async function getAllAuthors({
-  query,
   limit = PAGE_SIZE,
   page,
 }: {
-  query: string;
   limit?: number;
   page: number;
 }) {

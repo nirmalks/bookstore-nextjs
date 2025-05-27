@@ -59,7 +59,7 @@ const CheckoutForm = ({
       paymentMethod: 'card',
     },
   });
-  const [isPending, startTransition] = useTransition();
+  const [, startTransition] = useTransition();
 
   const isPlaceOrderDisabled = !(selectedAddressId && paymentMethod);
   const onSubmit: SubmitHandler<z.infer<typeof formSchema>> = async (

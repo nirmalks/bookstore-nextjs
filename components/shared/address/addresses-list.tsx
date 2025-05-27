@@ -8,7 +8,7 @@ const AddressList = ({
   onSelect,
 }: {
   addresses: ShippingAddress[];
-  selectAddress: ShippingAddress;
+  selectedAddress: ShippingAddress;
   onSelect: (address: ShippingAddress) => void;
 }) => {
   return (

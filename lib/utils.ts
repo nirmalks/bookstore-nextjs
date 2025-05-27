@@ -1,12 +1,32 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 import queryString from 'query-string';
+import { ZodError } from 'zod';
+import { Prisma } from '@prisma/client';
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-export function convertToPlainObject<T>(value: T): T {
-  return JSON.parse(JSON.stringify(value));
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function convertToPlainObject(obj: any): any {
+  if (obj && typeof obj === 'object') {
+    // Check if it's a Prisma Decimal instance by duck-typing
+    if (typeof obj.toFixed === 'function' && typeof obj.toString === 'function') {
+      return Number(obj.toString());
+    }
+
+    if (Array.isArray(obj)) {
+      return obj.map(convertToPlainObject);
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const newObj: any = {};
+    for (const key in obj) {
+      newObj[key] = convertToPlainObject(obj[key]);
+    }
+    return newObj;
+  }
+
 }
 
 export function formatNumberWithDecimal(num: number): string {
@@ -14,20 +34,27 @@ export function formatNumberWithDecimal(num: number): string {
   return decimal ? `${int}.${decimal.padEnd(2, '0')}` : `${int}.00`
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function formatError(error: any) {
-  if (error.name === 'ZodError') {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const fieldErrors = error.errors.map((err) => err.message)
-    return fieldErrors.join(',')
-  } else if (error.name === 'PrismaClientKnownRequestError' && error.code === 'P2002') {
-    const field = error.meta?.target ? error.meta.target[0] : 'Field';
-    return `${field.charAt(0).toUpperCase()} already exists`
-  } else {
-    return typeof error.message === 'string'
-      ? error.message
-      : JSON.stringify(error.message);
+export function formatError(error: unknown): string {
+  // Check for ZodError
+  if (error instanceof ZodError) {
+    const fieldErrors = error.errors.map((err) => err.message);
+    return fieldErrors.join(', ');
   }
+
+  // Check for Prisma known request error
+  if (
+    error instanceof Prisma.PrismaClientKnownRequestError &&
+    error.code === 'P2002'
+  ) {
+    const field = error.meta?.target ? (error.meta.target as string[])[0] : "Field"
+    return `${field.charAt(0).toUpperCase()} already exists`;
+  }
+
+  // Fallback for general Error
+  if (error instanceof Error) {
+    return error.message;
+  }
+  return JSON.stringify(error);
 }
 
 export function round2(value: number | string) {

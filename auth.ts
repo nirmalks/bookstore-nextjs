@@ -1,17 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import NextAuth from "next-auth"
-import { PrismaAdapter } from "@auth/prisma-adapter"
+import NextAuth from "next-auth";
 import { prisma } from "./db/prisma"
 import Credentials from "next-auth/providers/credentials"
 import { compare } from './lib/encrypt';
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import { NextAuthConfig } from "next-auth";
+import { PrismaAdapter } from "@auth/prisma-adapter"
+import type { Adapter } from '@auth/core/adapters';
 
-
-const config = {
-  adapter: PrismaAdapter(prisma),
+export const { handlers, auth, signIn, signOut } = NextAuth({
+  adapter: PrismaAdapter(prisma) as Adapter,
   providers: [Credentials({
     // You can specify which fields should be submitted, by adding keys to the `credentials` object.
     // e.g. domain, username, password, 2FA token, etc.
@@ -140,5 +139,4 @@ const config = {
     strategy: 'jwt',
     maxAge: 30 * 24 * 60 * 60
   }
-} satisfies NextAuthConfig
-export const { handlers, signIn, signOut, auth } = NextAuth(config) 
+})

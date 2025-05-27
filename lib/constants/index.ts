@@ -59,8 +59,10 @@ export const authorDefaultValues = {
   bio: '',
 };
 
-export const USER_ROLES = Object.values(UserRole)
-
+export const USER_ROLES = Object.values(UserRole) as [UserRole, ...UserRole[]];
+export type UserRoleType = (typeof USER_ROLES)[number];
+export const adminRole: (typeof USER_ROLES)[number] = 'ADMIN';
+export const userRole: (typeof USER_ROLES)[number] = 'USER';
 export const reviewFormDefaultValues = {
   title: '',
   comment: '',
