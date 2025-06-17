@@ -80,9 +80,6 @@ export type PlainCart = {
   taxPrice: number;
 };
 
-
-
-
 export type PlainOrder = {
   id: string;
   userId: string;

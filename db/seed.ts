@@ -80,8 +80,6 @@ async function main() {
     ));
 
   await prisma.user.createMany({ data: hashedUsers });
-
-  console.log('Seeding completed!');
 }
 
 main()

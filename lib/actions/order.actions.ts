@@ -323,9 +323,8 @@ type SalesDataType = {
 
 export async function getOrderSummary() {
   const ordersCount = await prisma.purchaseOrder.count();
-  const productsCount = await prisma.book.count();
+  const booksCount = await prisma.book.count();
   const usersCount = await prisma.user.count();
-
 
   const totalSales = await prisma.purchaseOrder.aggregate({
     _sum: { totalPrice: true },
@@ -350,7 +349,7 @@ export async function getOrderSummary() {
 
   return {
     ordersCount,
-    productsCount,
+    booksCount,
     usersCount,
     totalSales,
     latestSales,

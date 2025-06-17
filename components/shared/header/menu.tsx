@@ -33,6 +33,21 @@ const Menu = ({ role }: { role: string }) => {
           )}
         </Button>
         <Button asChild variant="ghost">
+          {role === 'USER' ? (
+            <Link
+              key="/users/profile"
+              href="/users/profile"
+              className={cn(
+                'text-sm font-medium transition-colors hover:text-primary'
+              )}
+            >
+              Profile
+            </Link>
+          ) : (
+            ''
+          )}
+        </Button>
+        <Button asChild variant="ghost">
           <Link href="/cart">
             <ShoppingCart />
             Cart
