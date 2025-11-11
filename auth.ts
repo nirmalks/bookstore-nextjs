@@ -10,6 +10,7 @@ import { PrismaAdapter } from "@auth/prisma-adapter"
 import type { Adapter } from '@auth/core/adapters';
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
+  trustHost: true,
   adapter: PrismaAdapter(prisma) as Adapter,
   providers: [Credentials({
     // You can specify which fields should be submitted, by adding keys to the `credentials` object.

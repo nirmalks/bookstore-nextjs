@@ -13,7 +13,6 @@ import { formatDateTime, formatPrice, shortenId } from '@/lib/utils';
 import { OrderItem, PlainOrder } from '@/types';
 import Link from 'next/link';
 import Image from 'next/image';
-import { BASE_IMAGE_URL } from '@/lib/constants';
 import { useTransition } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
@@ -143,7 +142,7 @@ const OrderDetailsTable = ({
                           href={`/books/${item.slug}`}
                         >
                           <Image
-                            src={`${BASE_IMAGE_URL}${item.image}`}
+                            src={`${item.image}`}
                             alt={item.name}
                             width={50}
                             height={50}
