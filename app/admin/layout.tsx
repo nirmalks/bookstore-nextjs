@@ -17,10 +17,11 @@ export default function AdminLayout({
           <div className="flex items-center h-16 px-4">
             <Link href="/" className="w-22">
               <Image
-                src="/images/logo.svg"
+                priority={true}
+                src="/images/logo.png"
                 height={48}
                 width={48}
-                alt={APP_NAME}
+                alt={`${APP_NAME} logo`}
               />
             </Link>
             <MainNav className="mx-6" />

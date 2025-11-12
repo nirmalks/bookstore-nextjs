@@ -62,9 +62,9 @@ const AdminAuthorsPage = async (props: {
               <TableCell>{author.name}</TableCell>
 
               <TableCell className="flex gap-1">
-                <Button asChild variant="outline" size="sm">
+                {/* <Button asChild variant="outline" size="sm">
                   <Link href={`/admin/authors/${author.id}`}>Edit</Link>
-                </Button>
+                </Button> */}
                 <DeleteDialog id={author.id} action={deleteAuthor} />
               </TableCell>
             </TableRow>
